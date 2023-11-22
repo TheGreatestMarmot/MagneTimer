@@ -1,9 +1,9 @@
 package com.example.magnettimer
-
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+
 class splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +21,7 @@ class splash : AppCompatActivity() {
         private const val DURATION : Long = 1500
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//    }
 }
