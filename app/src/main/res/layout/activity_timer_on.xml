@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".timer_on"
+    android:orientation="horizontal"
+    android:background="#050625">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="25dp"
+        >
+        <View
+            android:id="@+id/ellipse_1"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="center"
+            android:background="@drawable/eclipse"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30dp"/>
+        <TextView
+            android:fontFamily="@font/suit"
+            android:layout_width="225dp"
+            android:layout_height="225dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/eclipse2"
+            android:text="00:00:00"
+            android:textFontWeight="900"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="40dp"
+
+
+            />
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/lock"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/text"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="83dp"
+        android:src="@drawable/lock_24px" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="딴 짓 방지 켜짐"
+        android:layout_above="@+id/text"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="50dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/suit"
+        android:textFontWeight="900"
+        android:textSize="20dp"/>
+
+
+    <RelativeLayout
+        android:id="@+id/text"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+
+        <TextView
+            android:id="@+id/subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/suit"
+            android:text="과목:"
+            android:textFontWeight="900"
+            android:textSize="24dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/subject"
+            android:text="현재 시간:"
+            android:textSize="22dp"
+            android:id="@+id/time"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/time"
+
+            />
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_centerInParent="true"
+        android:backgroundTint="#ED6653"
+        android:layout_marginTop="20dp"
+        android:textSize="25dp"
+
+        android:text="종료"/>
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="25dp"
+        >
+        <View
+            android:id="@+id/ellipse_2"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="center"
+            android:background="@drawable/eclipse"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30dp"/>
+        <TextView
+            android:fontFamily="@font/suit"
+            android:layout_width="225dp"
+            android:layout_height="225dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/eclipse2"
+            android:text="NFC 태그 완료"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="32dp"
+            android:textFontWeight="900"
+
+            />
+
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>
