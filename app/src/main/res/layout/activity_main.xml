@@ -47,7 +47,6 @@
             android:textFontWeight="900"
             android:textColor="@color/white"
             android:text="12월26일 >"
-            android:background="#00ff0000"
             />
     </RelativeLayout>
 
