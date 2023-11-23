@@ -69,15 +69,16 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
+
         <TextView
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
             android:background="@drawable/eclipse2"
-            android:text="00:00:00"
             android:gravity="center"
+            android:text="00:00:00"
             android:textColor="@color/white"
-            android:textSize="40dp"/>
+            android:textSize="40dp" />
     </RelativeLayout>
 
 
@@ -95,134 +96,137 @@
 
         />
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:id="@+id/first">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:text="과목명"
-                android:textColor="@color/white"
-                android:fontFamily="@font/suit"
-                android:textSize="24dp"
+                android:background="@drawable/border"
+                android:id="@+id/first">
 
-                />
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="과목명"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/suit"
+                    android:textSize="24dp"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:fontFamily="@font/suit"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="삭제"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="#00ff0000"
+                    android:textColor="#ED6653"
+                    android:fontFamily="@font/suit"
+                    android:textFontWeight="900"
+                    />
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="00:00:00"
-                android:layout_centerInParent="true"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:fontFamily="@font/suit"
-                />
-            <Button
-                android:layout_width="wrap_content"
+                android:background="@drawable/border"
+                android:id="@+id/second"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="과목명"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/suit"
+                    android:textSize="24dp"
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:fontFamily="@font/suit"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="삭제"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="#00ff0000"
+                    android:textColor="#ED6653"
+                    android:fontFamily="@font/suit"
+                    android:textFontWeight="900"
+                    />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="삭제"
-                android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
-                android:backgroundTint="#00ff0000"
-                android:textColor="#ED6653"
-                android:fontFamily="@font/suit"
-                android:textFontWeight="900"
-                />
+                android:background="@drawable/border"
+                android:id="@+id/third"
+                android:layout_marginTop="15dp">
 
-        </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:text="과목명"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/suit"
+                    android:textSize="24dp"
 
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:fontFamily="@font/suit"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="삭제"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="#00ff0000"
+                    android:textColor="#ED6653"
+                    android:fontFamily="@font/suit"
+                    android:textFontWeight="900"
+                    />
 
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:id="@+id/second"
-            android:layout_marginTop="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:text="과목명"
-                android:textColor="@color/white"
-                android:fontFamily="@font/suit"
-                android:textSize="24dp"
-
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00:00"
-                android:layout_centerInParent="true"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:fontFamily="@font/suit"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="삭제"
-                android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
-                android:backgroundTint="#00ff0000"
-                android:textColor="#ED6653"
-                android:fontFamily="@font/suit"
-                android:textFontWeight="900"
-                />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:id="@+id/third"
-            android:layout_marginTop="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:text="과목명"
-                android:textColor="@color/white"
-                android:fontFamily="@font/suit"
-                android:textSize="24dp"
-
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00:00"
-                android:layout_centerInParent="true"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:fontFamily="@font/suit"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="삭제"
-                android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
-                android:backgroundTint="#00ff0000"
-                android:textColor="#ED6653"
-                android:fontFamily="@font/suit"
-                android:textFontWeight="900"
-                />
-
-        </RelativeLayout>
+            </RelativeLayout>
 
 
 
@@ -247,15 +251,14 @@
 
 
 
-    </LinearLayout>
 
 
 
 
+        </LinearLayout>
 
 
-
-
+    </ScrollView>
 
 
 
