@@ -25,6 +25,7 @@
             android:textColor="@color/white"
             android:text="< 12월24일"
             android:background="#00ff0000"
+
             />
 
       <Button
