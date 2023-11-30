@@ -28,6 +28,7 @@
             android:textSize="30dp"/>
 
         <TextView
+            android:id="@+id/stopWatch"
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
@@ -36,9 +37,9 @@
             android:gravity="center"
             android:text="00:00:00"
             android:textColor="@color/white"
+
+
             android:textFontWeight="900"
-
-
             android:textSize="40dp" />
 
     </RelativeLayout>
@@ -115,11 +116,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"
         android:layout_centerInParent="true"
-        android:backgroundTint="#ED6653"
         android:layout_marginTop="20dp"
-        android:textSize="25dp"
-
-        android:text="종료"/>
+        android:backgroundTint="#ED6653"
+        android:id="@+id/finish"
+        android:text="종료"
+        android:textSize="25dp" />
 
 
 
@@ -138,19 +139,19 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
+
         <TextView
-            android:fontFamily="@font/suit"
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
             android:background="@drawable/eclipse2"
-            android:text="NFC 미 태그"
+            android:fontFamily="@font/suit"
             android:gravity="center"
+            android:text="NFC 미 태그"
             android:textColor="@color/white"
-            android:textSize="32dp"
-            android:textFontWeight="900"
 
-            />
+            android:textFontWeight="900"
+            android:textSize="32dp" />
 
     </RelativeLayout>
 
