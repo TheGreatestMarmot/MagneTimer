@@ -22,7 +22,7 @@
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_gravity="center"
-            android:background="@drawable/eclipse"
+            android:background="@drawable/nfc_off"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
@@ -51,13 +51,13 @@
         android:layout_above="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginBottom="83dp"
-        android:src="@drawable/lock_24px" />
+        android:src="@drawable/lock_open" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="딴 짓 방지 켜짐"
+        android:text="딴 짓 방지 꺼짐"
         android:layout_above="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginBottom="50dp"
@@ -79,9 +79,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/suit"
-            android:text="과목:"
+            android:text="과목"
             android:textFontWeight="900"
             android:textSize="24dp" />
+
+        <Button
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_toRightOf="@+id/subject"
+            android:backgroundTint="#00f00000"
+            android:background="@drawable/edit"
+
+            />
 
 
         <TextView
@@ -125,7 +134,7 @@
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_gravity="center"
-            android:background="@drawable/eclipse"
+            android:background="@drawable/nfc_off"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
@@ -135,7 +144,7 @@
             android:layout_height="225dp"
             android:layout_centerInParent="true"
             android:background="@drawable/eclipse2"
-            android:text="NFC 태그 완료"
+            android:text="NFC 미 태그"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="32dp"
