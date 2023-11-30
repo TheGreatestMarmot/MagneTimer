@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.magnettimer"
+    namespace = "com.example.MagnetTimer"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.magnettimer"
+        applicationId = "com.example.MagnetTimer"
         minSdk = 21
         targetSdk = 34
         versionCode = 1

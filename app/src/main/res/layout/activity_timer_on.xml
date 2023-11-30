@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".timer_on"
     android:orientation="horizontal"
-    android:padding="35dp"
     android:background="#050625">
 
 
@@ -15,20 +14,19 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentLeft="true"
-
+        android:layout_marginLeft="25dp"
         >
         <View
             android:id="@+id/ellipse_1"
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_gravity="center"
-            android:background="@drawable/nfc_off"
+            android:background="@drawable/eclipse"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
 
         <TextView
-            android:id="@+id/stopWatch"
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
@@ -37,8 +35,7 @@
             android:gravity="center"
             android:text="00:00:00"
             android:textColor="@color/white"
-
-
+            android:id="@+id/stopWatch"
             android:textFontWeight="900"
             android:textSize="40dp" />
 
@@ -52,13 +49,13 @@
         android:layout_above="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginBottom="83dp"
-        android:src="@drawable/lock_open" />
+        android:src="@drawable/lock_24px" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="딴 짓 방지 꺼짐"
+        android:text="딴 짓 방지 켜짐"
         android:layout_above="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginBottom="50dp"
@@ -80,27 +77,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/suit"
-            android:text="과목"
+            android:text="과목:"
             android:textFontWeight="900"
             android:textSize="24dp" />
 
-        <Button
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_toRightOf="@+id/subject"
-            android:backgroundTint="#00f00000"
-            android:background="@drawable/edit"
-
-            />
-
 
         <TextView
-            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/subject"
             android:text="현재 시간:"
-            android:textSize="22dp" />
+            android:textSize="22dp"
+            android:id="@+id/time"/>
 
 
         <TextView
@@ -112,13 +100,13 @@
     </RelativeLayout>
 
     <Button
+        android:id="@+id/finish"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginTop="20dp"
         android:backgroundTint="#ED6653"
-        android:id="@+id/finish"
         android:text="종료"
         android:textSize="25dp" />
 
@@ -129,29 +117,30 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="25dp"
         >
         <View
             android:id="@+id/ellipse_2"
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_gravity="center"
-            android:background="@drawable/nfc_off"
+            android:background="@drawable/eclipse"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30dp"/>
-
         <TextView
+            android:fontFamily="@font/suit"
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
             android:background="@drawable/eclipse2"
-            android:fontFamily="@font/suit"
+            android:text="NFC 태그 완료"
             android:gravity="center"
-            android:text="NFC 미 태그"
             android:textColor="@color/white"
-
+            android:textSize="32dp"
             android:textFontWeight="900"
-            android:textSize="32dp" />
+
+            />
 
     </RelativeLayout>
 
