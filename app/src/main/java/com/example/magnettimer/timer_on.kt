@@ -6,12 +6,12 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.magnettimer.MainActivity
-import com.example.magnettimer.R
+import kotlin.math.log
 
 class timer_on : AppCompatActivity() {
 
@@ -43,6 +43,8 @@ class timer_on : AppCompatActivity() {
         }
     }
 
+    val nfcHandler = Handler()
+
     override fun onResume() {
         super.onResume()
 
@@ -50,6 +52,19 @@ class timer_on : AppCompatActivity() {
         nfcAdapter?.let {
             it.enableForegroundDispatch(this, nfcPendingIntent, null, null)
         }
+
+        // 3초 동안 NFC 감지 여부 확인
+        nfcHandler.postDelayed({
+            if (!isNfcTagDetected && isStopwatchRunning) {
+                stopStopwatch()
+                runOnUiThread {
+                    Toast.makeText(this@timer_on, "NFC 태그가 3초 동안 감지되지 않았습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }, 3000)
+
+        // 1초마다 NFC 감지 여부 확인
+        nfcHandler.postDelayed(nfcDetectionRunnable, 1000)
     }
 
     // onPause 시 NFC 전방향 디스패치 비활성화
@@ -57,10 +72,27 @@ class timer_on : AppCompatActivity() {
         super.onPause()
         nfcAdapter?.disableForegroundDispatch(this)
         stopStopwatch() // NFC 감지 중단 시 타이머 중단
+        nfcHandler.removeCallbacks(nfcDetectionRunnable) // 핸들러의 콜백 제거
+    }
+
+    private val nfcDetectionRunnable = object : Runnable {
+        override fun run() {
+            Log.d("NFC_DEBUGS", "isNfcTagDetected: $isNfcTagDetected")
+            Log.d("NFC_DEBUGS", "isNfcTagDetected: $isStopwatchRunning")
+            if (!isNfcTagDetected && isStopwatchRunning) {
+                stopStopwatch()
+                runOnUiThread {
+                    Toast.makeText(this@timer_on, "NFC 태그가 끊겼습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            handler.postDelayed(this, 1000)
+        }
     }
 
     private fun handleNfcIntent(intent: Intent) {
         val action: String? = intent.action
+        Log.d("NFC_DEBUG", "isNfcTagDetected: $isNfcTagDetected")
+        Log.d("NFC_DEBUG", "isNfcTagDetected: $isStopwatchRunning")
         if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action) {
             // NFC 태그가 감지되었을 때 수행할 작업
             isNfcTagDetected = true
@@ -75,6 +107,7 @@ class timer_on : AppCompatActivity() {
             // NFC 태그가 감지되지 않았을 때 수행할 작업
             isNfcTagDetected = false
             enableUserInteraction()
+            stopStopwatch() // NFC 태그가 끊겼을 때 스톱워치 멈춤
         }
     }
 
@@ -111,7 +144,7 @@ class timer_on : AppCompatActivity() {
 
     private fun stopStopwatch() {
         isStopwatchRunning = false
-        handler.removeCallbacksAndMessages(null) // 핸들러의 콜백 및 메시지 제거
+        handler.removeCallbacks(nfcDetectionRunnable) // 핸들러의 콜백 제거
     }
 
     private fun updateStopwatch() {
