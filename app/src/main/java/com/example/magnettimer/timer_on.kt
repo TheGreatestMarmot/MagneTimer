@@ -26,6 +26,7 @@ class timer_on : AppCompatActivity() {
     private var startTime: Long = 0
     private val handler = Handler()
     private var timerTask: TimerTask? = null
+    private var lastElapsedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,50 +54,17 @@ class timer_on : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         // 포그라운드 디스패치 활성화
         nfcAdapter?.let {
             it.enableForegroundDispatch(this, nfcPendingIntent, null, null)
         }
-
-        // 1초마다 NFC 감지 여부 확인
-        nfcHandler.postDelayed(nfcDetectionRunnable, 1000)
     }
 
     // onPause 시 NFC 전방향 디스패치 비활성화
     override fun onPause() {
         super.onPause()
         nfcAdapter?.disableForegroundDispatch(this)
-        stopStopwatch() // NFC 감지 중단 시 타이머 중단
-        nfcHandler.removeCallbacks(nfcDetectionRunnable) // 핸들러의 콜백 제거
     }
-
-    // 1초마다 NFC 감지 여부 확인하는 Runnable
-    private val nfcDetectionRunnable = object : Runnable {
-        override fun run() {
-            Log.d("NFC_DEBUGS", "isNfcTagDetected: $isNfcTagDetected")
-            Log.d("NFC_DEBUGS", "isStopwatchRunning: $isStopwatchRunning")
-
-            if (isNfcTagDetected && isStopwatchRunning) {
-                // 3초 마다 태그 상태를 확인
-                nfcHandler.postDelayed({
-                    if (!isNfcTagDetected && isStopwatchRunning) {
-                        // 태그가 풀린 경우
-                        stopStopwatch()
-                        runOnUiThread {
-                            Toast.makeText(this@timer_on, "NFC 태그가 끊겼습니다.", Toast.LENGTH_SHORT).show()
-                        }
-                        // 태그가 풀릴 때 isNfcTagDetected를 false로 설정
-                        isNfcTagDetected = false
-                    }
-                }, 3000)
-            }
-
-            nfcHandler.postDelayed(this, 3000)
-        }
-    }
-
-
 
     fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
 
@@ -113,7 +81,6 @@ class timer_on : AppCompatActivity() {
                 startStopwatch()
                 // 여기에서 태그 관련 작업 수행
                 Toast.makeText(this, "NFC 태그가 감지되었습니다.", Toast.LENGTH_SHORT).show()
-
                 val isoDep: IsoDep = IsoDep.get(tag)
 
                 isoDep.connect()
@@ -148,15 +115,23 @@ class timer_on : AppCompatActivity() {
     private fun startStopwatch() {
         if (!isStopwatchRunning) {
             isStopwatchRunning = true
-            startTime = System.currentTimeMillis()
+            if (lastElapsedTime == 0L) {
+                // 처음 시작할 때
+                startTime = System.currentTimeMillis()
+            } else {
+                // 이전에 저장된 시간이 있는 경우
+                startTime = System.currentTimeMillis() - lastElapsedTime
+            }
             updateStopwatch()
         }
     }
+
 
     private fun stopStopwatch() {
         isStopwatchRunning = false
         timerTask?.cancel()
         timerTask = null
+        lastElapsedTime = System.currentTimeMillis() - startTime
     }
 
     private fun updateStopwatch() {
@@ -178,4 +153,5 @@ class timer_on : AppCompatActivity() {
             }
         })
     }
+
 }
