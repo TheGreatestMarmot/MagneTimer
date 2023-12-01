@@ -3,14 +3,15 @@ package com.example.MagnetTimer
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,15 +28,21 @@ class timer_on : AppCompatActivity() {
     private val handler = Handler()
     private var timerTask: TimerTask? = null
     private var lastElapsedTime: Long = 0
+    private lateinit var gradient_1: ImageView
+    private lateinit var gradient_2: ImageView
+    private lateinit var locking : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer_on)
         window.statusBarColor = Color.parseColor("#050625")
-
+        gradient_1 = findViewById(R.id.ellipse_1)
+        gradient_2 = findViewById(R.id.ellipse_2)
+        locking = findViewById<ImageView>(R.id.lock)
         // NFC 어댑터 및 PendingIntent 초기화
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
         nfcPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_MUTABLE
         )
@@ -68,11 +75,12 @@ class timer_on : AppCompatActivity() {
 
     fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
 
-
     private fun handleNfcIntent(intent: Intent) {
         val action: String? = intent.action
         Log.d("NFC_DEBUG", "isNfcTagDetected: $isNfcTagDetected")
         Log.d("NFC_DEBUG", "isNfcTagDetected: $isStopwatchRunning")
+        val isNfcTextView = findViewById<TextView>(R.id.isNfcText)
+        val lockingTextView = findViewById<TextView>(R.id.lockText)
         if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action) {
             // NFC 태그가 감지되었을 때 수행할 작업
             isNfcTagDetected = true
@@ -82,8 +90,12 @@ class timer_on : AppCompatActivity() {
                 // 여기에서 태그 관련 작업 수행
                 Toast.makeText(this, "NFC 태그가 감지되었습니다.", Toast.LENGTH_SHORT).show()
                 val isoDep: IsoDep = IsoDep.get(tag)
-
                 isoDep.connect()
+                gradient_1.setImageResource(R.drawable.eclipse)
+                gradient_2.setImageResource(R.drawable.eclipse)
+                locking.setImageResource(R.drawable.lock_open)
+                isNfcTextView?.text ="NFC 태그 완료"
+                lockingTextView?.text="딴 짓 방지 켜짐"
 
                 Thread(Runnable {
                     try {
@@ -96,6 +108,7 @@ class timer_on : AppCompatActivity() {
                     catch (ex : Exception) {
                         ex.printStackTrace()
                         stopStopwatch()
+
                     }
                 }).start()
             }
@@ -126,7 +139,6 @@ class timer_on : AppCompatActivity() {
         }
     }
 
-
     private fun stopStopwatch() {
         isStopwatchRunning = false
         timerTask?.cancel()
@@ -150,8 +162,16 @@ class timer_on : AppCompatActivity() {
                     // 1000ms마다 스톱워치를 업데이트합니다.
                     nfcHandler.postDelayed(this, 1000)
                 }
+                else {
+                    val isNfcTextView = findViewById<TextView>(R.id.isNfcText)
+                    val lockingTextView = findViewById<TextView>(R.id.lockText)
+                    gradient_1.setImageResource(R.drawable.nfc_off)
+                    gradient_2.setImageResource(R.drawable.nfc_off)
+                    locking.setImageResource(R.drawable.lock_24px)
+                    isNfcTextView?.text = "NFC 태그 미완료"
+                    lockingTextView?.text = "딴 짓 방지 꺼짐"
+                }
             }
         })
     }
-
 }
