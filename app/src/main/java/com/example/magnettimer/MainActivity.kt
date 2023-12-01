@@ -56,38 +56,5 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // 포그라운드 디스패치 활성화
-        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
-    }
-
-    // onPause 시 NFC 전방향 디스패치 비활성화
-    override fun onPause() {
-        super.onPause() // 타이머 정지
-        nfcAdapter?.disableForegroundDispatch(this)
-    }
-
-    // NFC 태그 감지 시 호출되는 메서드
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleNfcIntent(intent)
-    }
-
-    private fun handleNfcIntent(intent: Intent) {
-        val action: String? = intent.action
-        if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action) {
-            // NFC 태그가 감지되었을 때 수행할 작업
-            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-            if (tag != null) {
-                // 여기에서 태그 관련 작업 수행
-                Toast.makeText(this, "NFC 태그가 감지되었습니다.", Toast.LENGTH_SHORT).show()
-
-                // 여기에 스톱워치 시작 코드를 추가하세요.
-                // 예를 들어, startStopwatch() 또는 타이머 시작하는 관련 코드를 넣으면 됩니다.
-            }
-        }
-    }
 
 }
