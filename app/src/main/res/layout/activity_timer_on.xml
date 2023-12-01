@@ -8,14 +8,13 @@
     android:orientation="horizontal"
     android:background="#050625">
 
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="25dp"
-        >
+        android:layout_marginLeft="25dp">
+
         <ImageView
             android:id="@+id/ellipse_1"
             android:layout_width="240dp"
@@ -24,7 +23,7 @@
             android:background="@drawable/nfc_off"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="30dp"/>
+            android:textSize="30dp" />
 
         <TextView
             android:id="@+id/stopWatch"
@@ -41,7 +40,6 @@
 
     </RelativeLayout>
 
-
     <ImageView
         android:id="@+id/lock"
         android:layout_width="60dp"
@@ -50,7 +48,6 @@
         android:layout_centerInParent="true"
         android:layout_marginBottom="83dp"
         android:src="@drawable/lock_24px" />
-
 
     <TextView
         android:id="@+id/lockText"
@@ -65,13 +62,19 @@
         android:textFontWeight="900"
         android:textSize="20dp" />
 
-
     <RelativeLayout
         android:id="@+id/text"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
+        <!-- 과목 입력칸 -->
+        <EditText
+            android:id="@+id/subjectEditText"
+            android:layout_width="44dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/subject"
+            android:textColor="@color/white"></EditText>
 
         <TextView
             android:id="@+id/subject"
@@ -82,15 +85,13 @@
             android:textFontWeight="900"
             android:textSize="24dp" />
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/subject"
+            android:layout_below="@+id/subjectEditText"
             android:text="현재 시간:"
             android:textSize="22dp"
             android:id="@+id/time"/>
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -111,15 +112,13 @@
         android:text="종료"
         android:textSize="25dp" />
 
-
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="25dp"
-        >
+        android:layout_marginRight="25dp">
+
         <ImageView
             android:id="@+id/ellipse_2"
             android:layout_width="240dp"
@@ -128,7 +127,7 @@
             android:background="@drawable/nfc_off"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="30dp"/>
+            android:textSize="30dp" />
 
         <TextView
             android:id="@+id/isNfcText"
@@ -142,11 +141,5 @@
             android:textColor="@color/white"
             android:textFontWeight="900"
             android:textSize="32dp" />
-
     </RelativeLayout>
-
-
-
-
-
 </RelativeLayout>
