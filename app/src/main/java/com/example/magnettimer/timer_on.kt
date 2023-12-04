@@ -17,9 +17,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.lang.Exception
 import java.util.TimerTask
+import android.view.WindowManager
 import com.example.magnettimer.Subject
 import com.example.magnettimer.SubjectDataSource
-
 
 class timer_on : AppCompatActivity() {
 
@@ -96,9 +96,11 @@ class timer_on : AppCompatActivity() {
                 isoDep.connect()
                 gradient_1.setImageResource(R.drawable.eclipse)
                 gradient_2.setImageResource(R.drawable.eclipse)
-                locking.setImageResource(R.drawable.lock_open)
+                locking.setImageResource(R.drawable.lock_24px)
                 isNfcTextView?.text ="NFC 태그 완료"
                 lockingTextView?.text="딴 짓 방지 켜짐"
+                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
 
                 Thread(Runnable {
                     try {
@@ -170,9 +172,11 @@ class timer_on : AppCompatActivity() {
                     val lockingTextView = findViewById<TextView>(R.id.lockText)
                     gradient_1.setImageResource(R.drawable.nfc_off)
                     gradient_2.setImageResource(R.drawable.nfc_off)
-                    locking.setImageResource(R.drawable.lock_24px)
+                    locking.setImageResource(R.drawable.lock_open)
                     isNfcTextView?.text = "NFC 태그 미완료"
                     lockingTextView?.text = "딴 짓 방지 꺼짐"
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
                 }
             }
         })
