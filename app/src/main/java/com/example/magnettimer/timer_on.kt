@@ -100,6 +100,7 @@ class timer_on : AppCompatActivity() {
                 isNfcTextView?.text ="NFC 태그 완료"
                 lockingTextView?.text="딴 짓 방지 켜짐"
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
 
                 Thread(Runnable {
