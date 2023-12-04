@@ -1,5 +1,8 @@
 package com.example.MagnetTimer
 
+import DBHelper
+import DBHelper.Companion.COLUMN_ELAPSED_TIME
+import DBHelper.Companion.COLUMN_SUBJECT_NAME
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
@@ -7,6 +10,8 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ListView
+import android.widget.SimpleCursorAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -65,6 +70,30 @@ class MainActivity : AppCompatActivity() {
     private fun enableNfcForegroundDispatch() {
         nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        // 리스트 업데이트
+        val dbHelper = DBHelper(this)
+        val cursor = dbHelper.getAllSubjects()
+        val adapter = SimpleCursorAdapter(this,
+            R.layout.subject_item, // 서브 아이템 레이아웃
+            cursor,
+            arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
+            intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
+            0)
+        val listView = findViewById<ListView>(R.id.listView)
+        listView.adapter = adapter
+
+        // 포그라운드 디스패치 활성화
+        nfcAdapter?.let {
+            it.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+        }
+    }
+
+
+
 
 
 }
