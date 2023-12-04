@@ -1,6 +1,7 @@
 package com.example.MagnetTimer
 
 import DBHelper
+import com.example.MagnetTimer.R
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
@@ -10,6 +11,7 @@ import android.nfc.tech.IsoDep
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
@@ -17,8 +19,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.lang.Exception
+import com.google.android.material.snackbar.Snackbar
 import java.util.TimerTask
+
+
+
 
 class timer_on : AppCompatActivity() {
 
@@ -51,6 +56,7 @@ class timer_on : AppCompatActivity() {
 
         val finishButton = findViewById<Button>(R.id.finish)
         finishButton.setOnClickListener {
+            showMessage()
             stopStopwatch()
 
             // 과목 저장
@@ -67,10 +73,25 @@ class timer_on : AppCompatActivity() {
 
             val resultIntent = Intent()
             setResult(RESULT_OK, resultIntent)
-            finish()
 
         }
 
+    }
+
+    private fun showMessage() {
+        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
+        if(stopWatchTextView.text.toString() == "00:00:00") {
+            val timerOnView = findViewById<View>(R.id.activity_timer_on)
+            val snackbar = Snackbar.make(timerOnView, "공부 하시고 종료하세요", Snackbar.LENGTH_LONG)
+            snackbar.setAction("확인") {
+                    snackbar.dismiss()
+                }
+
+            snackbar.show()
+
+        }else {
+            finish()
+        }
     }
 
 
@@ -172,18 +193,18 @@ class timer_on : AppCompatActivity() {
         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
         nfcHandler.post(object : Runnable {
             override fun run() {
+                val elapsedTime = System.currentTimeMillis() - startTime
+                val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
+                val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
+                val seconds = ((elapsedTime / 1000) % 60).toInt()
                 if (isStopwatchRunning) {
-                    val elapsedTime = System.currentTimeMillis() - startTime
                     if (elapsedTime > 0) {
-                        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
-                        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
-                        val seconds = ((elapsedTime / 1000) % 60).toInt()
-
                         val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
                         stopWatchTextView.text = formattedTime
                     } else {
                         stopWatchTextView.text = "00:00:00"
                     }
+
 
                     // 1000ms마다 스톱워치를 업데이트합니다.
                     nfcHandler.postDelayed(this, 1000)
