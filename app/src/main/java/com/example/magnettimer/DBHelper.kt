@@ -27,9 +27,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     }
 
     fun insertSubject(subjectName: String, elapsedTime: Long): Long { // 메서드 수정
+        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
+        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
+        val seconds = ((elapsedTime / 1000) % 60).toInt()
+        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
         val values = ContentValues()
         values.put(COLUMN_SUBJECT_NAME, subjectName)
-        values.put(COLUMN_ELAPSED_TIME, elapsedTime)
+        values.put(COLUMN_ELAPSED_TIME, formattedTime)
         val db = this.writableDatabase
         return db.insert(TABLE_SUBJECTS, null, values)
     }
