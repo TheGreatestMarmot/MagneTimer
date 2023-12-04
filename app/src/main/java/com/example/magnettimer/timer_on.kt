@@ -1,9 +1,9 @@
 package com.example.MagnetTimer
 
+import DBHelper
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.LinearGradient
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
@@ -11,14 +11,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.lang.Exception
 import java.util.TimerTask
-import com.example.magnettimer.Subject
-import com.example.magnettimer.SubjectDataSource
 
 
 class timer_on : AppCompatActivity() {
@@ -53,13 +52,30 @@ class timer_on : AppCompatActivity() {
         val finishButton = findViewById<Button>(R.id.finish)
         finishButton.setOnClickListener {
             stopStopwatch()
+
+            // 과목 저장
+            val subjectEditText = findViewById<EditText>(R.id.subjectEditText)
+            val subjectName = subjectEditText.text.toString()
+
+            if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장
+                val dbHelper = DBHelper(this)
+                dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분
+            } else {
+                Toast.makeText(this, "과목명을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val resultIntent = Intent()
             setResult(RESULT_OK, resultIntent)
             finish()
+
         }
+
     }
 
-    // nfcHandler를 사용하여 1초마다 NFC 감지 여부 확인
+
+
+        // nfcHandler를 사용하여 1초마다 NFC 감지 여부 확인
     private val nfcHandler = Handler()
 
     override fun onResume() {
@@ -155,17 +171,20 @@ class timer_on : AppCompatActivity() {
             override fun run() {
                 if (isStopwatchRunning) {
                     val elapsedTime = System.currentTimeMillis() - startTime
-                    val seconds = (elapsedTime / 1000).toInt()
-                    val minutes = seconds / 60
-                    val hours = minutes / 60
+                    if (elapsedTime > 0) {
+                        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
+                        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
+                        val seconds = ((elapsedTime / 1000) % 60).toInt()
 
-                    val formattedTime = String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
-                    stopWatchTextView.text = formattedTime
+                        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                        stopWatchTextView.text = formattedTime
+                    } else {
+                        stopWatchTextView.text = "00:00:00"
+                    }
 
                     // 1000ms마다 스톱워치를 업데이트합니다.
                     nfcHandler.postDelayed(this, 1000)
-                }
-                else {
+                } else {
                     val isNfcTextView = findViewById<TextView>(R.id.isNfcText)
                     val lockingTextView = findViewById<TextView>(R.id.lockText)
                     gradient_1.setImageResource(R.drawable.nfc_off)
@@ -177,4 +196,6 @@ class timer_on : AppCompatActivity() {
             }
         })
     }
+
+
 }
