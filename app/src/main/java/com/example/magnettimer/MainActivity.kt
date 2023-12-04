@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // UI 초기화
+        // UI 초기
         window.statusBarColor = Color.parseColor("#050625")
 
         // NFC 어댑터 확인 및 활성화 상태 확인
@@ -65,4 +65,6 @@ class MainActivity : AppCompatActivity() {
     private fun enableNfcForegroundDispatch() {
         nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
     }
+
+
 }

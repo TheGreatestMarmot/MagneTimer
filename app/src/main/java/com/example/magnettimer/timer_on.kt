@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import java.lang.Exception
 import java.util.TimerTask
 import android.view.WindowManager
+import com.example.magnettimer.Subject
+import com.example.magnettimer.SubjectDataSource
 
 class timer_on : AppCompatActivity() {
 
