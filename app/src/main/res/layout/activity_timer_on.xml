@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".timer_on"
     android:orientation="horizontal"
+    android:id="@+id/activity_timer_on"
     android:background="#050625">
 
     <RelativeLayout
@@ -71,7 +72,7 @@
         <!-- 과목 입력칸 -->
         <EditText
             android:id="@+id/subjectEditText"
-            android:layout_width="44dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/subject"
             android:textColor="@color/white"></EditText>
