@@ -1,0 +1,74 @@
+Index: app/src/main/java/com/example/magnettimer/DBHelper.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import android.content.ContentValues\r\nimport android.content.Context\r\nimport android.database.Cursor\r\nimport android.database.sqlite.SQLiteDatabase\r\nimport android.database.sqlite.SQLiteOpenHelper\r\n\r\nclass DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {\r\n\r\n    companion object {\r\n        const val DATABASE_NAME = \"subjects.db\"\r\n        const val DATABASE_VERSION = 2\r\n        const val TABLE_SUBJECTS = \"subjects\"\r\n        const val COLUMN_ID = \"_id\"\r\n        const val COLUMN_SUBJECT_NAME = \"subject_name\"\r\n        const val COLUMN_ELAPSED_TIME = \"elapsed_time\" // 추가된 컬럼\r\n    }\r\n\r\n    override fun onCreate(db: SQLiteDatabase) {\r\n        val createTableQuery = (\"CREATE TABLE $TABLE_SUBJECTS ($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, \"\r\n                + \"$COLUMN_SUBJECT_NAME TEXT NOT NULL, $COLUMN_ELAPSED_TIME INTEGER NOT NULL);\") // 테이블 생성 쿼리 수정\r\n        db.execSQL(createTableQuery)\r\n    }\r\n\r\n    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {\r\n        db.execSQL(\"DROP TABLE IF EXISTS $TABLE_SUBJECTS\")\r\n        onCreate(db)\r\n    }\r\n\r\n    fun insertSubject(subjectName: String, elapsedTime: Long): Long { // 메서드 수정\r\n        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()\r\n        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()\r\n        val seconds = ((elapsedTime / 1000) % 60).toInt()\r\n        val formattedTime = String.format(\"%02d:%02d:%02d\", hours, minutes, seconds)\r\n        val values = ContentValues()\r\n        values.put(COLUMN_SUBJECT_NAME, subjectName)\r\n        values.put(COLUMN_ELAPSED_TIME, formattedTime)\r\n        val db = this.writableDatabase\r\n        return db.insert(TABLE_SUBJECTS, null, values)\r\n    }\r\n\r\n    fun getAllSubjects(): Cursor { // 메서드 수정\r\n        val db = this.readableDatabase\r\n        return db.rawQuery(\"SELECT * FROM $TABLE_SUBJECTS\", null)\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/magnettimer/DBHelper.kt b/app/src/main/java/com/example/magnettimer/DBHelper.kt
+--- a/app/src/main/java/com/example/magnettimer/DBHelper.kt	
++++ b/app/src/main/java/com/example/magnettimer/DBHelper.kt	
+@@ -42,4 +42,14 @@
+         val db = this.readableDatabase
+         return db.rawQuery("SELECT * FROM $TABLE_SUBJECTS", null)
+     }
++
++    fun deleteSubject(id: Long) {
++        val db = this.writableDatabase
++        db.delete(TABLE_SUBJECTS, "$COLUMN_ID=?", arrayOf(id.toString()))
++        db.close()
++    }
++
++
++
+ }
++
+Index: app/src/main/java/com/example/magnettimer/SubjectAdapter.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/magnettimer/SubjectAdapter.kt b/app/src/main/java/com/example/magnettimer/SubjectAdapter.kt
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/java/com/example/magnettimer/SubjectAdapter.kt	
+@@ -0,0 +1,42 @@
++package com.example.magnettimer
++
++import DBHelper
++import android.content.Context
++import android.database.Cursor
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import android.widget.Button
++import androidx.cursoradapter.widget.SimpleCursorAdapter
++import com.example.MagnetTimer.R
++
++class SubjectAdapter(
++    context: Context,
++    layout: Int,
++    c: Cursor,
++    from: Array<String>,
++    to: IntArray,
++    flags: Int
++) : SimpleCursorAdapter(context, layout, c, from, to, flags) {
++
++    private val mInflater: LayoutInflater = LayoutInflater.from(context)
++    private val mContext = context
++
++    override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
++        return mInflater.inflate(R.layout.subject_item, parent, false)
++    }
++
++    override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
++        super.bindView(view, context, cursor)
++
++        val deleteButton = view?.findViewById<Button>(R.id.deleteButton)
++        deleteButton?.setOnClickListener {
++            val id = cursor?.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID))
++            id?.let {
++                val dbHelper = DBHelper(mContext)
++                dbHelper.deleteSubject(it)
++                this.swapCursor(dbHelper.getAllSubjects())
++            }
++        }
++    }
++}

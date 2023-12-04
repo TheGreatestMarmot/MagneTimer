@@ -14,6 +14,7 @@ import android.widget.ListView
 import android.widget.SimpleCursorAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.magnettimer.SubjectAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,12 +78,14 @@ class MainActivity : AppCompatActivity() {
         // 리스트 업데이트
         val dbHelper = DBHelper(this)
         val cursor = dbHelper.getAllSubjects()
-        val adapter = SimpleCursorAdapter(this,
+        val adapter = SubjectAdapter(
+            this,
             R.layout.subject_item, // 서브 아이템 레이아웃
             cursor,
             arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
             intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
-            0)
+            0
+        )
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = adapter
 
@@ -91,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             it.enableForegroundDispatch(this, nfcPendingIntent, null, null)
         }
     }
+
 
 
 
