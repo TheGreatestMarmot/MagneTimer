@@ -42,4 +42,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_SUBJECTS", null)
     }
+
+    fun deleteSubject(id: Long) {
+        val db = this.writableDatabase
+        db.delete(TABLE_SUBJECTS, "$COLUMN_ID=?", arrayOf(id.toString()))
+        db.close()
+    }
 }
