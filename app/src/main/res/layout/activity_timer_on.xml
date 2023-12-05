@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/subject"
             android:text="현재 위치:"
-            android:textSize="22dp" />
+            android:textSize="22dp"  />
 
 
         <TextView
