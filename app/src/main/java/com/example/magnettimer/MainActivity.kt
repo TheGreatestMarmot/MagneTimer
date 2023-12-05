@@ -12,18 +12,24 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView
 import android.widget.SimpleCursorAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.magnettimer.SubjectAdapter
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
     private var nfcPendingIntent: PendingIntent? = null
+    private var totalElapsedTime: Long = 0
+    private lateinit var elapsedTimeTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
 
         // UI 초기
         window.statusBarColor = Color.parseColor("#050625")
@@ -78,6 +84,17 @@ class MainActivity : AppCompatActivity() {
         // 리스트 업데이트
         val dbHelper = DBHelper(this)
         val cursor = dbHelper.getAllSubjects()
+        totalElapsedTime = 0
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)
+                if (columnIndex != -1) {
+                    totalElapsedTime += cursor.getLong(columnIndex)
+                }
+                cursor.moveToNext()
+            }
+        }
+        elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
         val adapter = SubjectAdapter(
             this,
             R.layout.subject_item, // 서브 아이템 레이아웃
@@ -95,9 +112,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
-
+    private fun convertMillisToTimeFormat(millis: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
 
 
 }

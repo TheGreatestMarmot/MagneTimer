@@ -72,7 +72,7 @@
         <!-- 과목 입력칸 -->
         <EditText
             android:id="@+id/subjectEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/subject"
             android:textColor="@color/white"/>
@@ -91,7 +91,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/subjectEditText"
-            android:text="현재 시간:"
             android:textSize="22dp"
             android:textColor="#fff"
             android:id="@+id/time"/>

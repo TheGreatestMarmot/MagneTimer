@@ -69,6 +69,7 @@
             android:textSize="30dp"/>
 
         <TextView
+            android:id="@+id/totalElapsedTimeTextView"
             android:layout_width="225dp"
             android:layout_height="225dp"
             android:layout_centerInParent="true"
