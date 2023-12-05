@@ -12,7 +12,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         const val TABLE_SUBJECTS = "subjects"
         const val COLUMN_ID = "_id"
         const val COLUMN_SUBJECT_NAME = "subject_name"
-        const val COLUMN_ELAPSED_TIME = "elapsed_time" // 추가된 컬럼
+        const val COLUMN_ELAPSED_TIME = "elapsed_time"
     }
 
     override fun onCreate(db: SQLiteDatabase) {

@@ -1,0 +1,456 @@
+Index: app/src/main/java/com/example/magnettimer/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.MagnetTimer\r\n\r\nimport DBHelper\r\nimport DBHelper.Companion.COLUMN_ELAPSED_TIME\r\nimport DBHelper.Companion.COLUMN_SUBJECT_NAME\r\nimport android.app.PendingIntent\r\nimport android.content.Intent\r\nimport android.graphics.Color\r\nimport android.nfc.NfcAdapter\r\nimport android.nfc.Tag\r\nimport android.os.Bundle\r\nimport android.widget.Button\r\nimport android.widget.ListView\r\nimport android.widget.SimpleCursorAdapter\r\nimport android.widget.TextView\r\nimport android.widget.Toast\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport com.example.magnettimer.SubjectAdapter\r\nimport java.util.concurrent.TimeUnit\r\n\r\nclass MainActivity : AppCompatActivity() {\r\n\r\n    private var nfcAdapter: NfcAdapter? = null\r\n    private var nfcPendingIntent: PendingIntent? = null\r\n    private var totalElapsedTime: Long = 0\r\n    private lateinit var elapsedTimeTextView: TextView\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_main)\r\n\r\n        elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)\r\n\r\n        // UI 초기\r\n        window.statusBarColor = Color.parseColor(\"#050625\")\r\n\r\n        // NFC 어댑터 확인 및 활성화 상태 확인\r\n        nfcAdapter = NfcAdapter.getDefaultAdapter(this)\r\n        if (nfcAdapter == null) {\r\n            // NFC가 지원되지 않는 경우\r\n            showToast(\"이 기기에서는 NFC가 지원되지 않습니다.\")\r\n            return\r\n        }\r\n\r\n        if (!nfcAdapter!!.isEnabled) {\r\n            // NFC가 비활성화된 경우\r\n            showToast(\"NFC가 활성화되어 있지 않습니다.\")\r\n        } else {\r\n            // NFC가 활성화된 경우\r\n            showToast(\"NFC가 활성화 되었습니다.\")\r\n        }\r\n\r\n        // 버튼 클릭 이벤트 처리\r\n        val startButton = findViewById<Button>(R.id.timeStart)\r\n        startButton.setOnClickListener {\r\n            // NFC 전방향 디스패치 활성화\r\n            enableNfcForegroundDispatch()\r\n\r\n            // 타이머 액티비티로 이동\r\n            val intent = Intent(this, timer_on::class.java)\r\n            startActivity(intent)\r\n        }\r\n\r\n        // onPause 시 NFC 전방향 디스패치 비활성화\r\n        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)\r\n        nfcPendingIntent = PendingIntent.getActivity(\r\n            this, 0, intent, PendingIntent.FLAG_MUTABLE\r\n        )\r\n    }\r\n\r\n    // 토스트 메시지 표시\r\n    private fun showToast(message: String) {\r\n        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()\r\n    }\r\n\r\n    // NFC 전방향 디스패치 활성화\r\n    private fun enableNfcForegroundDispatch() {\r\n        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)\r\n    }\r\n\r\n    override fun onResume() {\r\n        super.onResume()\r\n\r\n        // 리스트 업데이트\r\n        val dbHelper = DBHelper(this)\r\n        val cursor = dbHelper.getAllSubjects()\r\n        totalElapsedTime = 0\r\n        if (cursor.moveToFirst()) {\r\n            while (!cursor.isAfterLast) {\r\n                val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)\r\n                if (columnIndex != -1) {\r\n                    totalElapsedTime += cursor.getLong(columnIndex)\r\n                }\r\n                cursor.moveToNext()\r\n            }\r\n        }\r\n        elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)\r\n        val adapter = SubjectAdapter(\r\n            this,\r\n            R.layout.subject_item, // 서브 아이템 레이아웃\r\n            cursor,\r\n            arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),\r\n            intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),\r\n            0\r\n        )\r\n        val listView = findViewById<ListView>(R.id.listView)\r\n        listView.adapter = adapter\r\n\r\n        // 포그라운드 디스패치 활성화\r\n        nfcAdapter?.let {\r\n            it.enableForegroundDispatch(this, nfcPendingIntent, null, null)\r\n        }\r\n    }\r\n\r\n    private fun convertMillisToTimeFormat(millis: Long): String {\r\n        val hours = TimeUnit.MILLISECONDS.toHours(millis)\r\n        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)\r\n        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)\r\n        return String.format(\"%02d:%02d:%02d\", hours, minutes, seconds)\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/magnettimer/MainActivity.kt b/app/src/main/java/com/example/magnettimer/MainActivity.kt
+--- a/app/src/main/java/com/example/magnettimer/MainActivity.kt	(revision bf9ae5af9ffa9b65c7d21166432fb4bfcf246a6a)
++++ b/app/src/main/java/com/example/magnettimer/MainActivity.kt	(date 1701761070662)
+@@ -3,15 +3,16 @@
+ import DBHelper
+ import DBHelper.Companion.COLUMN_ELAPSED_TIME
+ import DBHelper.Companion.COLUMN_SUBJECT_NAME
++import android.animation.ObjectAnimator
+ import android.app.PendingIntent
+ import android.content.Intent
+ import android.graphics.Color
+ import android.nfc.NfcAdapter
+-import android.nfc.Tag
+ import android.os.Bundle
++import android.view.View
++import android.view.animation.LinearInterpolator
+ import android.widget.Button
+ import android.widget.ListView
+-import android.widget.SimpleCursorAdapter
+ import android.widget.TextView
+ import android.widget.Toast
+ import androidx.appcompat.app.AppCompatActivity
+@@ -21,103 +22,108 @@
+ class MainActivity : AppCompatActivity() {
+ 
+     private var nfcAdapter: NfcAdapter? = null
+-    private var nfcPendingIntent: PendingIntent? = null
+-    private var totalElapsedTime: Long = 0
+     private lateinit var elapsedTimeTextView: TextView
++    private var totalElapsedTime = 0L
++    private var nfcPendingIntent: PendingIntent? = null
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.activity_main)
+ 
+-        elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
++
++        setupUI()
++        setupNFC()
++        setupStartButton()
++        setupNfcPendingIntent()
++
++        val ellipse1 = findViewById<View>(R.id.ellipse_1)
++        startRotationAnimation(ellipse1)
++
++
++    }
++
++    private fun startRotationAnimation(view: View) {
++        val rotation = ObjectAnimator.ofFloat(view, "rotation", 0f, 360f)
++        rotation.duration = 2000 // 애니메이션의 기간 설정
++        rotation.repeatCount = ObjectAnimator.INFINITE // 무한 반복 설정
++        rotation.interpolator = LinearInterpolator() // 선형 보간 사용
++
++        rotation.start()
++    }
++
++        private fun setupUI() {
++            window.statusBarColor = Color.parseColor("#050625")
++            elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
++        }
+ 
+-        // UI 초기
+-        window.statusBarColor = Color.parseColor("#050625")
+-
+-        // NFC 어댑터 확인 및 활성화 상태 확인
+-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+-        if (nfcAdapter == null) {
+-            // NFC가 지원되지 않는 경우
+-            showToast("이 기기에서는 NFC가 지원되지 않습니다.")
+-            return
+-        }
+-
+-        if (!nfcAdapter!!.isEnabled) {
+-            // NFC가 비활성화된 경우
+-            showToast("NFC가 활성화되어 있지 않습니다.")
+-        } else {
+-            // NFC가 활성화된 경우
+-            showToast("NFC가 활성화 되었습니다.")
++        private fun setupNFC() {
++            nfcAdapter = NfcAdapter.getDefaultAdapter(this)
++            when {
++                nfcAdapter == null -> showToast("이 기기에서는 NFC가 지원되지 않습니다.")
++                !nfcAdapter!!.isEnabled -> showToast("NFC가 활성화되어 있지 않습니다.")
++                else -> showToast("NFC가 활성화 되었습니다.")
++            }
+         }
+ 
+-        // 버튼 클릭 이벤트 처리
+-        val startButton = findViewById<Button>(R.id.timeStart)
+-        startButton.setOnClickListener {
+-            // NFC 전방향 디스패치 활성화
+-            enableNfcForegroundDispatch()
+-
+-            // 타이머 액티비티로 이동
+-            val intent = Intent(this, timer_on::class.java)
+-            startActivity(intent)
++        private fun setupStartButton() {
++            val startButton = findViewById<Button>(R.id.timeStart)
++            startButton.setOnClickListener {
++                enableNfcForegroundDispatch()
++                startActivity(Intent(this, timer_on::class.java))
++            }
+         }
+ 
+-        // onPause 시 NFC 전방향 디스패치 비활성화
+-        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+-        nfcPendingIntent = PendingIntent.getActivity(
+-            this, 0, intent, PendingIntent.FLAG_MUTABLE
+-        )
+-    }
++        private fun setupNfcPendingIntent() {
++            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
++            nfcPendingIntent =
++                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
++        }
+ 
+-    // 토스트 메시지 표시
+-    private fun showToast(message: String) {
+-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+-    }
++        private fun showToast(message: String) {
++            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
++        }
+ 
+-    // NFC 전방향 디스패치 활성화
+-    private fun enableNfcForegroundDispatch() {
+-        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+-    }
++        private fun enableNfcForegroundDispatch() {
++            nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
++        }
+ 
+-    override fun onResume() {
+-        super.onResume()
++        override fun onResume() {
++            super.onResume()
++            updateSubjectsList()
++            nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
++        }
+ 
+-        // 리스트 업데이트
+-        val dbHelper = DBHelper(this)
+-        val cursor = dbHelper.getAllSubjects()
+-        totalElapsedTime = 0
+-        if (cursor.moveToFirst()) {
+-            while (!cursor.isAfterLast) {
+-                val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)
+-                if (columnIndex != -1) {
+-                    totalElapsedTime += cursor.getLong(columnIndex)
+-                }
+-                cursor.moveToNext()
+-            }
+-        }
+-        elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
+-        val adapter = SubjectAdapter(
+-            this,
+-            R.layout.subject_item, // 서브 아이템 레이아웃
+-            cursor,
+-            arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
+-            intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
+-            0
+-        )
+-        val listView = findViewById<ListView>(R.id.listView)
+-        listView.adapter = adapter
+-
+-        // 포그라운드 디스패치 활성화
+-        nfcAdapter?.let {
+-            it.enableForegroundDispatch(this, nfcPendingIntent, null, null)
++        private fun updateSubjectsList() {
++            val dbHelper = DBHelper(this)
++            val cursor = dbHelper.getAllSubjects()
++            totalElapsedTime = 0
++            if (cursor.moveToFirst()) {
++                while (!cursor.isAfterLast) {
++                    val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)
++                    if (columnIndex != -1) {
++                        totalElapsedTime += cursor.getLong(columnIndex)
++                    }
++                    cursor.moveToNext()
++                }
++            }
++            elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
++            val adapter = SubjectAdapter(
++                this,
++                R.layout.subject_item,
++                cursor,
++                arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
++                intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
++                0
++            )
++            val listView = findViewById<ListView>(R.id.listView)
++            listView.adapter = adapter
+         }
+-    }
+ 
+-    private fun convertMillisToTimeFormat(millis: Long): String {
+-        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+-        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)
+-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
+-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
++        private fun convertMillisToTimeFormat(millis: Long): String {
++            val hours = TimeUnit.MILLISECONDS.toHours(millis)
++            val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)
++            val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
++            return String.format("%02d:%02d:%02d", hours, minutes, seconds)
++        }
+     }
+-
+ 
+-}
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MainActivity\"\r\n    android:background=\"#050625\"\r\n    android:orientation=\"vertical\"\r\n    >\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"top\"\r\n        android:layout_margin=\"20dp\"\r\n        >\r\n\r\n        <Button\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignParentLeft=\"true\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:textFontWeight=\"900\"\r\n            android:textColor=\"@color/white\"\r\n            android:text=\"&lt; 12월24일\"\r\n            android:background=\"#00ff0000\"\r\n            />\r\n\r\n        <Button\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:textFontWeight=\"900\"\r\n            android:textColor=\"#ED6653\"\r\n            android:text=\"12월 25일\"\r\n            android:layout_centerInParent=\"true\"\r\n            android:background=\"#00ff0000\"\r\n            />\r\n\r\n        <Button\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignParentRight=\"true\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:textFontWeight=\"900\"\r\n            android:textColor=\"@color/white\"\r\n            android:text=\"12월26일 >\"\r\n            android:backgroundTint=\"#00ff0000\"\r\n            />\r\n\r\n    </RelativeLayout>\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        >\r\n        <View\r\n            android:id=\"@+id/ellipse_1\"\r\n            android:layout_width=\"240dp\"\r\n            android:layout_height=\"240dp\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginTop=\"45dp\"\r\n            android:layout_margin=\"20dp\"\r\n            android:background=\"@drawable/eclipse\"\r\n            android:layout_centerInParent=\"true\"\r\n            android:gravity=\"center\"\r\n            android:textColor=\"@color/white\"\r\n            android:textSize=\"30dp\"/>\r\n\r\n        <TextView\r\n            android:id=\"@+id/totalElapsedTimeTextView\"\r\n            android:layout_width=\"225dp\"\r\n            android:layout_height=\"225dp\"\r\n            android:layout_centerInParent=\"true\"\r\n            android:background=\"@drawable/eclipse2\"\r\n            android:gravity=\"center\"\r\n            android:text=\"00:00:00\"\r\n            android:textColor=\"@color/white\"\r\n            android:textSize=\"40dp\" />\r\n    </RelativeLayout>\r\n\r\n    <Button\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"center\"\r\n        android:layout_margin=\"20dp\"\r\n        android:text=\"시작\"\r\n        android:fontFamily=\"@font/suit\"\r\n        android:textFontWeight=\"900\"\r\n        android:textSize=\"24dp\"\r\n        android:backgroundTint=\"#ED6653\"\r\n        android:id=\"@+id/timeStart\"\r\n        />\r\n\r\n    <ListView\r\n        android:id=\"@+id/listView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        />\r\n\r\n</LinearLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision bf9ae5af9ffa9b65c7d21166432fb4bfcf246a6a)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1701762093559)
+@@ -9,22 +9,22 @@
+     android:orientation="vertical"
+     >
+ 
+-    <RelativeLayout
+-        android:layout_width="wrap_content"
++    <LinearLayout
++
++        android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:layout_gravity="top"
+-        android:layout_margin="20dp"
+-        >
++        android:layout_gravity="top">
+ 
+         <Button
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:layout_alignParentLeft="true"
++
+             android:fontFamily="@font/suit"
+             android:textFontWeight="900"
+             android:textColor="@color/white"
+-            android:text="&lt; 12월24일"
++            android:text="12월24일"
+             android:background="#00ff0000"
++            android:layout_weight="1"
+             />
+ 
+         <Button
+@@ -34,22 +34,23 @@
+             android:textFontWeight="900"
+             android:textColor="#ED6653"
+             android:text="12월 25일"
+-            android:layout_centerInParent="true"
++
+             android:background="#00ff0000"
++            android:layout_weight="1"
+             />
+ 
+         <Button
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:layout_alignParentRight="true"
++
+             android:fontFamily="@font/suit"
+             android:textFontWeight="900"
+             android:textColor="@color/white"
+-            android:text="12월26일 >"
++            android:text="12월26일"
+             android:backgroundTint="#00ff0000"
++            android:layout_weight="1"
+             />
+-
+-    </RelativeLayout>
++    </LinearLayout>
+ 
+     <RelativeLayout
+         android:layout_width="match_parent"
+Index: app/src/main/java/com/example/magnettimer/timer_on.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.MagnetTimer\r\n\r\nimport DBHelper\r\nimport com.example.MagnetTimer.R\r\nimport android.app.PendingIntent\r\nimport android.content.Intent\r\nimport android.graphics.Color\r\nimport android.nfc.NfcAdapter\r\nimport android.nfc.Tag\r\nimport android.nfc.tech.IsoDep\r\nimport android.os.Bundle\r\nimport android.os.Handler\r\nimport android.util.Log\r\nimport android.view.View\r\nimport android.view.WindowManager\r\nimport android.widget.Button\r\nimport android.widget.EditText\r\nimport android.widget.ImageView\r\nimport android.widget.TextView\r\nimport android.widget.Toast\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport com.google.android.material.snackbar.Snackbar\r\nimport java.util.TimerTask\r\n\r\nclass timer_on : AppCompatActivity() {\r\n\r\n    private var nfcAdapter: NfcAdapter? = null\r\n    private var nfcPendingIntent: PendingIntent? = null\r\n    private var isNfcTagDetected = false\r\n    private var isStopwatchRunning = false\r\n    private var startTime: Long = 0\r\n    private val handler = Handler()\r\n    private var timerTask: TimerTask? = null\r\n    private var lastElapsedTime: Long = 0\r\n    private lateinit var gradient_1: ImageView\r\n    private lateinit var gradient_2: ImageView\r\n    private lateinit var locking : ImageView\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_timer_on)\r\n        window.statusBarColor = Color.parseColor(\"#050625\")\r\n        gradient_1 = findViewById(R.id.ellipse_1)\r\n        gradient_2 = findViewById(R.id.ellipse_2)\r\n        locking = findViewById<ImageView>(R.id.lock)\r\n        // NFC 어댑터 및 PendingIntent 초기화\r\n        nfcAdapter = NfcAdapter.getDefaultAdapter(this)\r\n        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)\r\n        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)\r\n        nfcPendingIntent = PendingIntent.getActivity(\r\n            this, 0, intent, PendingIntent.FLAG_MUTABLE\r\n        )\r\n\r\n        val finishButton = findViewById<Button>(R.id.finish)\r\n        finishButton.setOnClickListener {\r\n            showMessage()\r\n            stopStopwatch()\r\n\r\n            // 과목 저장\r\n            val subjectEditText = findViewById<EditText>(R.id.subjectEditText)\r\n            val subjectName = subjectEditText.text.toString()\r\n            if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장\r\n                val dbHelper = DBHelper(this)\r\n                dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분\r\n            } else {\r\n                Toast.makeText(this, \"과목명을 입력하세요.\", Toast.LENGTH_SHORT).show()\r\n                return@setOnClickListener\r\n            }\r\n\r\n            val resultIntent = Intent()\r\n            setResult(RESULT_OK, resultIntent)\r\n        }\r\n\r\n    }\r\n\r\n    private fun showMessage() {\r\n        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)\r\n        if(stopWatchTextView.text.toString() == \"00:00:00\") {\r\n            val timerOnView = findViewById<View>(R.id.activity_timer_on)\r\n            val snackbar = Snackbar.make(timerOnView, \"공부 하시고 종료하세요\", Snackbar.LENGTH_LONG)\r\n            snackbar.setAction(\"확인\") {\r\n                    snackbar.dismiss()\r\n                }\r\n\r\n            snackbar.show()\r\n\r\n        }else {\r\n            finish()\r\n        }\r\n    }\r\n\r\n\r\n\r\n        // nfcHandler를 사용하여 1초마다 NFC 감지 여부 확인\r\n    private val nfcHandler = Handler()\r\n\r\n    override fun onResume() {\r\n        super.onResume()\r\n        // 포그라운드 디스패치 활성화\r\n        nfcAdapter?.let {\r\n            it.enableForegroundDispatch(this, nfcPendingIntent, null, null)\r\n        }\r\n    }\r\n\r\n    // onPause 시 NFC 전방향 디스패치 비활성화\r\n    override fun onPause() {\r\n        super.onPause()\r\n        nfcAdapter?.disableForegroundDispatch(this)\r\n    }\r\n\r\n    fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }\r\n\r\n    private fun handleNfcIntent(intent: Intent) {\r\n        val action: String? = intent.action\r\n        Log.d(\"NFC_DEBUG\", \"isNfcTagDetected: $isNfcTagDetected\")\r\n        Log.d(\"NFC_DEBUG\", \"isNfcTagDetected: $isStopwatchRunning\")\r\n        val isNfcTextView = findViewById<TextView>(R.id.isNfcText)\r\n        val lockingTextView = findViewById<TextView>(R.id.lockText)\r\n        if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action) {\r\n            // NFC 태그가 감지되었을 때 수행할 작업\r\n            isNfcTagDetected = true\r\n            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)\r\n            if (tag != null) {\r\n                startStopwatch()\r\n                // 여기에서 태그 관련 작업 수행\r\n                Toast.makeText(this, \"NFC 태그가 감지되었습니다.\", Toast.LENGTH_SHORT).show()\r\n                val isoDep: IsoDep = IsoDep.get(tag)\r\n                isoDep.connect()\r\n                gradient_1.setImageResource(R.drawable.eclipse)\r\n                gradient_2.setImageResource(R.drawable.eclipse)\r\n                locking.setImageResource(R.drawable.lock_24px)\r\n                isNfcTextView?.text =\"NFC 태그 완료\"\r\n                lockingTextView?.text=\"딴 짓 방지 켜짐\"\r\n                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)\r\n                supportActionBar?.setDisplayHomeAsUpEnabled(false)\r\n\r\n\r\n                Thread(Runnable {\r\n                    try {\r\n                        while (true) {\r\n                            val request = byteArrayOfInts(0x00, 0x01, 0x02, 0x03);\r\n                            val response = isoDep.transceive(request)\r\n                            Thread.sleep(500)\r\n                        }\r\n                    }\r\n                    catch (ex : Exception) {\r\n                        ex.printStackTrace()\r\n                        stopStopwatch()\r\n\r\n                    }\r\n                }).start()\r\n            }\r\n        } else {\r\n            // NFC 태그가 감지되지 않았을 때 수행할 작업\r\n            isNfcTagDetected = false\r\n            stopStopwatch() // NFC 태그가 끊겼을 때 스톱워치 멈춤\r\n        }\r\n    }\r\n\r\n    // NFC 태그 감지 시 호출되는 메서드\r\n    override fun onNewIntent(intent: Intent) {\r\n        super.onNewIntent(intent)\r\n        handleNfcIntent(intent)\r\n    }\r\n\r\n    private fun startStopwatch() {\r\n        if (!isStopwatchRunning) {\r\n            isStopwatchRunning = true\r\n            if (lastElapsedTime == 0L) {\r\n                // 처음 시작할 때\r\n                startTime = System.currentTimeMillis()\r\n            } else {\r\n                // 이전에 저장된 시간이 있는 경우\r\n                startTime = System.currentTimeMillis() - lastElapsedTime\r\n            }\r\n            updateStopwatch()\r\n        }\r\n    }\r\n\r\n    private fun stopStopwatch() {\r\n        isStopwatchRunning = false\r\n        timerTask?.cancel()\r\n        timerTask = null\r\n        lastElapsedTime = System.currentTimeMillis() - startTime\r\n    }\r\n\r\n    private fun updateStopwatch() {\r\n        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)\r\n        nfcHandler.post(object : Runnable {\r\n            override fun run() {\r\n                val elapsedTime = System.currentTimeMillis() - startTime\r\n                val hours = (elapsedTime / (1000 * 60 * 60)).toInt()\r\n                val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()\r\n                val seconds = ((elapsedTime / 1000) % 60).toInt()\r\n                if (isStopwatchRunning) {\r\n                    if (elapsedTime > 0) {\r\n                        val formattedTime = String.format(\"%02d:%02d:%02d\", hours, minutes, seconds)\r\n                        stopWatchTextView.text = formattedTime\r\n                    } else {\r\n                        stopWatchTextView.text = \"00:00:00\"\r\n                    }\r\n                    // 1000ms마다 스톱워치를 업데이트합니다.\r\n                    nfcHandler.postDelayed(this, 1000)\r\n                } else {\r\n                    val isNfcTextView = findViewById<TextView>(R.id.isNfcText)\r\n                    val lockingTextView = findViewById<TextView>(R.id.lockText)\r\n                    gradient_1.setImageResource(R.drawable.nfc_off)\r\n                    gradient_2.setImageResource(R.drawable.nfc_off)\r\n                    locking.setImageResource(R.drawable.lock_open)\r\n                    isNfcTextView?.text = \"NFC 미태그\"\r\n                    lockingTextView?.text = \"딴 짓 방지 꺼짐\"\r\n                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)\r\n                    \"00:00:00\"\r\n                }\r\n\r\n            }\r\n        })\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/magnettimer/timer_on.kt b/app/src/main/java/com/example/magnettimer/timer_on.kt
+--- a/app/src/main/java/com/example/magnettimer/timer_on.kt	(revision bf9ae5af9ffa9b65c7d21166432fb4bfcf246a6a)
++++ b/app/src/main/java/com/example/magnettimer/timer_on.kt	(date 1701761952903)
+@@ -1,6 +1,7 @@
+ package com.example.MagnetTimer
+ 
+ import DBHelper
++import android.animation.ObjectAnimator
+ import com.example.MagnetTimer.R
+ import android.app.PendingIntent
+ import android.content.Intent
+@@ -13,6 +14,7 @@
+ import android.util.Log
+ import android.view.View
+ import android.view.WindowManager
++import android.view.animation.LinearInterpolator
+ import android.widget.Button
+ import android.widget.EditText
+ import android.widget.ImageView
+@@ -47,6 +49,10 @@
+         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
++        val ellipse1 = findViewById<View>(R.id.ellipse_1)
++        val ellipse2 = findViewById<View>(R.id.ellipse_2)
++        startRotationAnimation(ellipse1)
++        startRotationAnimation(ellipse2)
+         nfcPendingIntent = PendingIntent.getActivity(
+             this, 0, intent, PendingIntent.FLAG_MUTABLE
+         )
+@@ -72,7 +78,14 @@
+         }
+ 
+     }
++    private fun startRotationAnimation(view: View) {
++        val rotation = ObjectAnimator.ofFloat(view, "rotation", 0f, 360f)
++        rotation.duration = 2000 // 애니메이션의 기간 설정
++        rotation.repeatCount = ObjectAnimator.INFINITE // 무한 반복 설정
++        rotation.interpolator = LinearInterpolator() // 선형 보간 사용
+ 
++        rotation.start()
++    }
+     private fun showMessage() {
+         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
+         if(stopWatchTextView.text.toString() == "00:00:00") {
+Index: app/src/main/res/layout/activity_timer_on.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".timer_on\"\r\n    android:orientation=\"horizontal\"\r\n    android:id=\"@+id/activity_timer_on\"\r\n    android:background=\"#050625\">\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_alignParentLeft=\"true\"\r\n        android:layout_marginLeft=\"25dp\">\r\n\r\n        <ImageView\r\n            android:id=\"@+id/ellipse_1\"\r\n            android:layout_width=\"240dp\"\r\n            android:layout_height=\"240dp\"\r\n            android:layout_gravity=\"center\"\r\n            android:background=\"@drawable/nfc_off\"\r\n            android:gravity=\"center\"\r\n            android:textColor=\"@color/white\"\r\n            android:textSize=\"30dp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/stopWatch\"\r\n            android:layout_width=\"225dp\"\r\n            android:layout_height=\"225dp\"\r\n            android:layout_centerInParent=\"true\"\r\n            android:background=\"@drawable/eclipse2\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:gravity=\"center\"\r\n            android:text=\"00:00:00\"\r\n            android:textColor=\"@color/white\"\r\n            android:textFontWeight=\"900\"\r\n            android:textSize=\"40dp\" />\r\n\r\n    </RelativeLayout>\r\n\r\n    <ImageView\r\n        android:id=\"@+id/lock\"\r\n        android:layout_width=\"60dp\"\r\n        android:layout_height=\"60dp\"\r\n        android:layout_above=\"@+id/text\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_marginBottom=\"83dp\"\r\n        android:src=\"@drawable/lock_24px\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/lockText\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_above=\"@+id/text\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_marginBottom=\"50dp\"\r\n        android:fontFamily=\"@font/suit\"\r\n        android:text=\"딴 짓 방지 꺼짐\"\r\n        android:textColor=\"@color/white\"\r\n        android:textFontWeight=\"900\"\r\n        android:textSize=\"20dp\" />\r\n\r\n    <RelativeLayout\r\n        android:id=\"@+id/text\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_centerInParent=\"true\">\r\n\r\n        <!-- 과목 입력칸 -->\r\n        <EditText\r\n            android:textSize=\"22dp\"\r\n            android:id=\"@+id/subjectEditText\"\r\n            android:layout_width=\"120dp\"\r\n            android:layout_height=\"26dp\"\r\n            android:layout_toRightOf=\"@+id/subject\"\r\n            android:background=\"@null\"\r\n            android:textColor=\"@color/white\"/>\r\n\r\n        <TextView\r\n            android:id=\"@+id/subject\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:text=\"과목:\"\r\n            android:textFontWeight=\"900\"\r\n            android:textColor=\"#fff\"\r\n            android:textSize=\"24dp\" />\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_below=\"@+id/subjectEditText\"\r\n            android:text=\"현재 시간:\"\r\n            android:textSize=\"22dp\"\r\n            android:textColor=\"#fff\"\r\n            android:id=\"@+id/time\"/>\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_alignRight=\"@+id/time\"\r\n\r\n            />\r\n    </RelativeLayout>\r\n\r\n    <Button\r\n        android:id=\"@+id/finish\"\r\n        android:layout_width=\"120dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_below=\"@+id/text\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_marginTop=\"20dp\"\r\n        android:backgroundTint=\"#ED6653\"\r\n        android:text=\"종료\"\r\n        android:textSize=\"25dp\" />\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_centerInParent=\"true\"\r\n        android:layout_alignParentRight=\"true\"\r\n        android:layout_marginRight=\"25dp\">\r\n\r\n        <ImageView\r\n            android:id=\"@+id/ellipse_2\"\r\n            android:layout_width=\"240dp\"\r\n            android:layout_height=\"240dp\"\r\n            android:layout_gravity=\"center\"\r\n            android:background=\"@drawable/nfc_off\"\r\n            android:gravity=\"center\"\r\n            android:textColor=\"@color/white\"\r\n            android:textSize=\"30dp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/isNfcText\"\r\n            android:layout_width=\"225dp\"\r\n            android:layout_height=\"225dp\"\r\n            android:layout_centerInParent=\"true\"\r\n            android:background=\"@drawable/eclipse2\"\r\n            android:fontFamily=\"@font/suit\"\r\n            android:gravity=\"center\"\r\n            android:text=\"NFC 태그 미완료\"\r\n            android:textColor=\"@color/white\"\r\n            android:textFontWeight=\"900\"\r\n            android:textSize=\"32dp\" />\r\n    </RelativeLayout>\r\n</RelativeLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_timer_on.xml b/app/src/main/res/layout/activity_timer_on.xml
+--- a/app/src/main/res/layout/activity_timer_on.xml	(revision bf9ae5af9ffa9b65c7d21166432fb4bfcf246a6a)
++++ b/app/src/main/res/layout/activity_timer_on.xml	(date 1701762594910)
+@@ -48,7 +48,7 @@
+         android:layout_above="@+id/text"
+         android:layout_centerInParent="true"
+         android:layout_marginBottom="83dp"
+-        android:src="@drawable/lock_24px" />
++        android:src="@drawable/lock_open" />
+ 
+     <TextView
+         android:id="@+id/lockText"
+@@ -77,7 +77,8 @@
+             android:layout_height="26dp"
+             android:layout_toRightOf="@+id/subject"
+             android:background="@null"
+-            android:textColor="@color/white"/>
++            android:textColor="@color/white"
++            />
+ 
+         <TextView
+             android:id="@+id/subject"
+Index: app/src/main/res/anim/red_anim.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/anim/red_anim.xml b/app/src/main/res/anim/red_anim.xml
+new file mode 100644
+--- /dev/null	(date 1701760912731)
++++ b/app/src/main/res/anim/red_anim.xml	(date 1701760912731)
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<set xmlns:android="http://schemas.android.com/apk/res/android">
++    <alpha
++        android:fromAlpha="0.0"
++        android:toAlpha="1.0"
++        android:duration="1000" />
++
++    <!-- 두 번째 아이템: 기존의 drawable 애니메이션 -->
++    <item
++        android:drawable="@drawable/gradient1"
++        android:duration="4500" />
++
++    <!-- 세 번째 아이템: 다시 페이드 인 효과 -->
++    <alpha
++        android:fromAlpha="0.0"
++        android:toAlpha="1.0"
++        android:duration="1000" />
++
++    <!-- 네 번째 아이템: 또 다른 drawable 애니메이션 -->
++    <item
++        android:drawable="@drawable/nfc_off"
++        android:duration="4500" />
++</set>
+\ No newline at end of file
+Index: app/src/main/java/com/example/magnettimer/DBHelper.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import android.content.ContentValues\r\nimport android.content.Context\r\nimport android.database.Cursor\r\nimport android.database.sqlite.SQLiteDatabase\r\nimport android.database.sqlite.SQLiteOpenHelper\r\n\r\nclass DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {\r\n\r\n    companion object {\r\n        const val DATABASE_NAME = \"subjects.db\"\r\n        const val DATABASE_VERSION = 2\r\n        const val TABLE_SUBJECTS = \"subjects\"\r\n        const val COLUMN_ID = \"_id\"\r\n        const val COLUMN_SUBJECT_NAME = \"subject_name\"\r\n        const val COLUMN_ELAPSED_TIME = \"elapsed_time\" // 추가된 컬럼\r\n    }\r\n\r\n    override fun onCreate(db: SQLiteDatabase) {\r\n        val createTableQuery = (\"CREATE TABLE $TABLE_SUBJECTS ($COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, \"\r\n                + \"$COLUMN_SUBJECT_NAME TEXT NOT NULL, $COLUMN_ELAPSED_TIME INTEGER NOT NULL);\") // 테이블 생성 쿼리 수정\r\n        db.execSQL(createTableQuery)\r\n    }\r\n\r\n    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {\r\n        db.execSQL(\"DROP TABLE IF EXISTS $TABLE_SUBJECTS\")\r\n        onCreate(db)\r\n    }\r\n\r\n    fun insertSubject(subjectName: String, elapsedTime: Long): Long { // 메서드 수정\r\n        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()\r\n        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()\r\n        val seconds = ((elapsedTime / 1000) % 60).toInt()\r\n        val formattedTime = String.format(\"%02d:%02d:%02d\", hours, minutes, seconds)\r\n        val values = ContentValues()\r\n        values.put(COLUMN_SUBJECT_NAME, subjectName)\r\n        values.put(COLUMN_ELAPSED_TIME, formattedTime)\r\n        val db = this.writableDatabase\r\n        return db.insert(TABLE_SUBJECTS, null, values)\r\n    }\r\n\r\n    fun getAllSubjects(): Cursor { // 메서드 수정\r\n        val db = this.readableDatabase\r\n        return db.rawQuery(\"SELECT * FROM $TABLE_SUBJECTS\", null)\r\n    }\r\n\r\n    fun deleteSubject(id: Long) {\r\n        val db = this.writableDatabase\r\n        db.delete(TABLE_SUBJECTS, \"$COLUMN_ID=?\", arrayOf(id.toString()))\r\n        db.close()\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/magnettimer/DBHelper.kt b/app/src/main/java/com/example/magnettimer/DBHelper.kt
+--- a/app/src/main/java/com/example/magnettimer/DBHelper.kt	(revision bf9ae5af9ffa9b65c7d21166432fb4bfcf246a6a)
++++ b/app/src/main/java/com/example/magnettimer/DBHelper.kt	(date 1701759005468)
+@@ -12,7 +12,7 @@
+         const val TABLE_SUBJECTS = "subjects"
+         const val COLUMN_ID = "_id"
+         const val COLUMN_SUBJECT_NAME = "subject_name"
+-        const val COLUMN_ELAPSED_TIME = "elapsed_time" // 추가된 컬럼
++        const val COLUMN_ELAPSED_TIME = "elapsed_time"
+     }
+ 
+     override fun onCreate(db: SQLiteDatabase) {
+Index: app/src/main/res/anim/anim_list.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/anim/anim_list.xml b/app/src/main/res/anim/anim_list.xml
+new file mode 100644
+--- /dev/null	(date 1701759884716)
++++ b/app/src/main/res/anim/anim_list.xml	(date 1701759884716)
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<set xmlns:android="http://schemas.android.com/apk/res/android">
++    <alpha
++        android:fromAlpha="0.0"
++        android:toAlpha="1.0"
++        android:duration="1000" />
++
++    <!-- 두 번째 아이템: 기존의 drawable 애니메이션 -->
++    <item
++        android:drawable="@drawable/gradient2"
++        android:duration="4500" />
++
++    <!-- 세 번째 아이템: 다시 페이드 인 효과 -->
++    <alpha
++        android:fromAlpha="0.0"
++        android:toAlpha="1.0"
++        android:duration="1000" />
++
++    <!-- 네 번째 아이템: 또 다른 drawable 애니메이션 -->
++    <item
++        android:drawable="@drawable/eclipse"
++        android:duration="4500" />
++</set>
+\ No newline at end of file

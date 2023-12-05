@@ -1,6 +1,7 @@
 package com.example.MagnetTimer
 
 import DBHelper
+import android.animation.ObjectAnimator
 import com.example.MagnetTimer.R
 import android.app.PendingIntent
 import android.content.Intent
@@ -13,6 +14,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -59,6 +61,10 @@ class timer_on : AppCompatActivity() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
+        val ellipse1 = findViewById<View>(R.id.ellipse_1)
+        val ellipse2 = findViewById<View>(R.id.ellipse_2)
+        startRotationAnimation(ellipse1)
+        startRotationAnimation(ellipse2)
         nfcPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_MUTABLE
         )
@@ -90,7 +96,14 @@ class timer_on : AppCompatActivity() {
         }
 
     }
+    private fun startRotationAnimation(view: View) {
+        val rotation = ObjectAnimator.ofFloat(view, "rotation", 0f, 360f)
+        rotation.duration = 2000 // 애니메이션의 기간 설정
+        rotation.repeatCount = ObjectAnimator.INFINITE // 무한 반복 설정
+        rotation.interpolator = LinearInterpolator() // 선형 보간 사용
 
+        rotation.start()
+    }
     private fun showMessage() {
         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
         if (stopWatchTextView.text.toString() == "00:00:00") {
