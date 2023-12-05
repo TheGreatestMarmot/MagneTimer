@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/subject"
-            android:textColor="@color/white"></EditText>
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/subject"
@@ -140,7 +140,7 @@
             android:background="@drawable/eclipse2"
             android:fontFamily="@font/suit"
             android:gravity="center"
-            android:text="NFC 태그 미완료"
+            android:text="NFC 미 태그"
             android:textColor="@color/white"
             android:textFontWeight="900"
             android:textSize="32dp" />
