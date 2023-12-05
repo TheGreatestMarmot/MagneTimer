@@ -48,7 +48,7 @@
         android:layout_above="@+id/text"
         android:layout_centerInParent="true"
         android:layout_marginBottom="83dp"
-        android:src="@drawable/lock_24px" />
+        android:src="@drawable/lock_open" />
 
     <TextView
         android:id="@+id/lockText"
@@ -75,7 +75,8 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/subject"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            />
 
         <TextView
             android:id="@+id/subject"

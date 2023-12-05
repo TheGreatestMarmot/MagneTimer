@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="1000" />
+
+    <!-- 두 번째 아이템: 기존의 drawable 애니메이션 -->
+    <item
+        android:drawable="@drawable/gradient2"
+        android:duration="4500" />
+
+    <!-- 세 번째 아이템: 다시 페이드 인 효과 -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="1000" />
+
+    <!-- 네 번째 아이템: 또 다른 drawable 애니메이션 -->
+    <item
+        android:drawable="@drawable/eclipse"
+        android:duration="4500" />
+</set>

@@ -9,22 +9,22 @@
     android:orientation="vertical"
     >
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_margin="20dp"
-        >
+        android:layout_gravity="top">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+
             android:fontFamily="@font/suit"
             android:textFontWeight="900"
             android:textColor="@color/white"
-            android:text="&lt; 12월24일"
+            android:text="12월24일"
             android:background="#00ff0000"
+            android:layout_weight="1"
             />
 
         <Button
@@ -34,22 +34,23 @@
             android:textFontWeight="900"
             android:textColor="#ED6653"
             android:text="12월 25일"
-            android:layout_centerInParent="true"
+
             android:background="#00ff0000"
+            android:layout_weight="1"
             />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+
             android:fontFamily="@font/suit"
             android:textFontWeight="900"
             android:textColor="@color/white"
-            android:text="12월26일 >"
+            android:text="12월26일"
             android:backgroundTint="#00ff0000"
+            android:layout_weight="1"
             />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
