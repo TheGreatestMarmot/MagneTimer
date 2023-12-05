@@ -15,11 +15,7 @@
         <activity
             android:name=".timer_on"
             android:screenOrientation="landscape"
-            />
-        <activity
-            android:name=".timer_off"
             android:exported="false"
-
             />
         <activity
             android:name=".MainActivity"
