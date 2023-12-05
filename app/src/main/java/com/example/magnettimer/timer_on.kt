@@ -34,8 +34,13 @@ class timer_on : AppCompatActivity() {
     private var lastElapsedTime: Long = 0
     private lateinit var gradient_1: ImageView
     private lateinit var gradient_2: ImageView
-    private lateinit var locking : ImageView
-
+    private lateinit var locking: ImageView
+    private lateinit var stopWatchTextView: TextView
+    private lateinit var subjectEditText: TextView
+    private var hours: Int = 0
+    private var minutes: Int = 0
+    private var seconds: Int = 0
+    private val elapsedTime = System.currentTimeMillis() - startTime
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer_on)
@@ -43,6 +48,13 @@ class timer_on : AppCompatActivity() {
         gradient_1 = findViewById(R.id.ellipse_1)
         gradient_2 = findViewById(R.id.ellipse_2)
         locking = findViewById<ImageView>(R.id.lock)
+        stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
+        subjectEditText = findViewById<EditText>(R.id.subjectEditText)
+        var elapsedTime = System.currentTimeMillis() - startTime
+
+        val hours:Int = (elapsedTime / (1000 * 60 * 60)).toInt()
+        val minutes:Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
+        val seconds:Int = ((elapsedTime / 1000) % 60).toInt()
         // NFC 어댑터 및 PendingIntent 초기화
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -53,19 +65,25 @@ class timer_on : AppCompatActivity() {
 
         val finishButton = findViewById<Button>(R.id.finish)
         finishButton.setOnClickListener {
-            showMessage()
-            stopStopwatch()
-
-            // 과목 저장
-            val subjectEditText = findViewById<EditText>(R.id.subjectEditText)
-            val subjectName = subjectEditText.text.toString()
-            if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장
-                val dbHelper = DBHelper(this)
-                dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분
-            } else {
-                Toast.makeText(this, "과목명을 입력하세요.", Toast.LENGTH_SHORT).show()
+            val subjectName: String
+            if (stopWatchTextView.text == "00:00:00") {
+                showMessage()
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                "00:00:00"
                 return@setOnClickListener
+            } else {
+                subjectName = subjectEditText.text.toString()
+                if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장
+                    val dbHelper = DBHelper(this)
+                    dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분
+                } else {
+                    Toast.makeText(this, "과목명을 입력하세요.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                finish()
             }
+            stopStopwatch()
+            // 과목 저장
 
             val resultIntent = Intent()
             setResult(RESULT_OK, resultIntent)
@@ -75,23 +93,21 @@ class timer_on : AppCompatActivity() {
 
     private fun showMessage() {
         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
-        if(stopWatchTextView.text.toString() == "00:00:00") {
+        if (stopWatchTextView.text.toString() == "00:00:00") {
             val timerOnView = findViewById<View>(R.id.activity_timer_on)
             val snackbar = Snackbar.make(timerOnView, "공부 하시고 종료하세요", Snackbar.LENGTH_LONG)
             snackbar.setAction("확인") {
-                    snackbar.dismiss()
-                }
+                snackbar.dismiss()
+            }
 
             snackbar.show()
 
-        }else {
-            finish()
         }
+
     }
 
 
-
-        // nfcHandler를 사용하여 1초마다 NFC 감지 여부 확인
+    // nfcHandler를 사용하여 1초마다 NFC 감지 여부 확인
     private val nfcHandler = Handler()
 
     override fun onResume() {
@@ -129,8 +145,8 @@ class timer_on : AppCompatActivity() {
                 gradient_1.setImageResource(R.drawable.eclipse)
                 gradient_2.setImageResource(R.drawable.eclipse)
                 locking.setImageResource(R.drawable.lock_24px)
-                isNfcTextView?.text ="NFC 태그 완료"
-                lockingTextView?.text="딴 짓 방지 켜짐"
+                isNfcTextView?.text = "NFC 태그 완료"
+                lockingTextView?.text = "딴 짓 방지 켜짐"
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
@@ -142,8 +158,7 @@ class timer_on : AppCompatActivity() {
                             val response = isoDep.transceive(request)
                             Thread.sleep(500)
                         }
-                    }
-                    catch (ex : Exception) {
+                    } catch (ex: Exception) {
                         ex.printStackTrace()
                         stopStopwatch()
 
@@ -185,14 +200,14 @@ class timer_on : AppCompatActivity() {
     }
 
     private fun updateStopwatch() {
-        val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
+
         nfcHandler.post(object : Runnable {
             override fun run() {
-                val elapsedTime = System.currentTimeMillis() - startTime
-                val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
-                val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
-                val seconds = ((elapsedTime / 1000) % 60).toInt()
                 if (isStopwatchRunning) {
+                    val elapsedTime = System.currentTimeMillis() - startTime
+                    val hours:Int = (elapsedTime / (1000 * 60 * 60)).toInt()
+                    val minutes:Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
+                    val seconds:Int = ((elapsedTime / 1000) % 60).toInt()
                     if (elapsedTime > 0) {
                         val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
                         stopWatchTextView.text = formattedTime
