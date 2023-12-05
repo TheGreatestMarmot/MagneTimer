@@ -59,7 +59,6 @@ class timer_on : AppCompatActivity() {
             // 과목 저장
             val subjectEditText = findViewById<EditText>(R.id.subjectEditText)
             val subjectName = subjectEditText.text.toString()
-
             if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장
                 val dbHelper = DBHelper(this)
                 dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분
@@ -200,8 +199,6 @@ class timer_on : AppCompatActivity() {
                     } else {
                         stopWatchTextView.text = "00:00:00"
                     }
-
-
                     // 1000ms마다 스톱워치를 업데이트합니다.
                     nfcHandler.postDelayed(this, 1000)
                 } else {
@@ -213,8 +210,9 @@ class timer_on : AppCompatActivity() {
                     isNfcTextView?.text = "NFC 미태그"
                     lockingTextView?.text = "딴 짓 방지 꺼짐"
                     window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-
+                    "00:00:00"
                 }
+
             }
         })
     }
