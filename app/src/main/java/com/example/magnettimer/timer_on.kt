@@ -210,7 +210,7 @@ class timer_on : AppCompatActivity() {
                     gradient_1.setImageResource(R.drawable.nfc_off)
                     gradient_2.setImageResource(R.drawable.nfc_off)
                     locking.setImageResource(R.drawable.lock_open)
-                    isNfcTextView?.text = "NFC 태그 미완료"
+                    isNfcTextView?.text = "NFC 미태그"
                     lockingTextView?.text = "딴 짓 방지 꺼짐"
                     window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
