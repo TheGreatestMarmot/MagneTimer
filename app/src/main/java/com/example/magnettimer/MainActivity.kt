@@ -21,109 +21,139 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    // NFC 어댑터를 저장하는 변수
     private var nfcAdapter: NfcAdapter? = null
+
+    // 전체 경과 시간을 표시하는 TextView
     private lateinit var elapsedTimeTextView: TextView
+
+    // 전체 경과 시간을 저장하는 변수
     private var totalElapsedTime = 0L
+
+    // NFC 이벤트가 발생했을 때 실행할 PendingIntent
     private var nfcPendingIntent: PendingIntent? = null
 
+    // 액티비티가 처음 생성될 때 호출되는 메서드
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        // UI 설정 메서드 호출
         setupUI()
+
+        // NFC 설정 메서드 호출
         setupNFC()
+
+        // 시작 버튼 설정 메서드 호출
         setupStartButton()
+
+        // NFC PendingIntent 설정 메서드 호출
         setupNfcPendingIntent()
 
+        // 회전 애니메이션 시작 메서드 호출
         val ellipse1 = findViewById<View>(R.id.ellipse_1)
         startRotationAnimation(ellipse1)
-
-
     }
 
+    // 주어진 뷰에 대해 회전 애니메이션을 시작하는 메서드
     private fun startRotationAnimation(view: View) {
         val rotation = ObjectAnimator.ofFloat(view, "rotation", 0f, 360f)
         rotation.duration = 2000 // 애니메이션의 기간 설정
         rotation.repeatCount = ObjectAnimator.INFINITE // 무한 반복 설정
         rotation.interpolator = LinearInterpolator() // 선형 보간 사용
 
-        rotation.start()
+        rotation.start() // 애니메이션 시작
     }
 
-        private fun setupUI() {
-            window.statusBarColor = Color.parseColor("#050625")
-            elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
-        }
+    // UI를 설정하는 메서드
+    private fun setupUI() {
+        window.statusBarColor = Color.parseColor("#050625")
+        elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
+    }
 
-        private fun setupNFC() {
-            nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-            when {
-                nfcAdapter == null -> showToast("이 기기에서는 NFC가 지원되지 않습니다.")
-                !nfcAdapter!!.isEnabled -> showToast("NFC가 활성화되어 있지 않습니다.")
-                else -> showToast("NFC가 활성화 되었습니다.")
-            }
+    // NFC를 설정하는 메서드
+    private fun setupNFC() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        when {
+            nfcAdapter == null -> showToast("이 기기에서는 NFC가 지원되지 않습니다.")
+            !nfcAdapter!!.isEnabled -> showToast("NFC가 활성화되어 있지 않습니다.")
+            else -> showToast("NFC가 활성화 되었습니다.")
         }
+    }
 
-        private fun setupStartButton() {
-            val startButton = findViewById<Button>(R.id.timeStart)
-            startButton.setOnClickListener {
-                enableNfcForegroundDispatch()
-                startActivity(Intent(this, timer_on::class.java))
-            }
+
+    // 시작 버튼을 설정하는 메서드
+    private fun setupStartButton() {
+        val startButton = findViewById<Button>(R.id.timeStart)
+        startButton.setOnClickListener {
+            // NFC 받기 활성화
+            enableNfcForegroundDispatch()
+            // timer_on 액티비티로 이동
+            startActivity(Intent(this, timer_on::class.java))
         }
+    }
 
-        private fun setupNfcPendingIntent() {
-            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            nfcPendingIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
-        }
+    // NFC PendingIntent를 설정하는 메서드
+    private fun setupNfcPendingIntent() {
+        // 현재 액티비티를 대상으로 하는 Intent 생성
+        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        // PendingIntent 생성
+        nfcPendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
+    }
 
-        private fun showToast(message: String) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        }
+    // 토스트 메시지를 보여주는 메서드
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
-        private fun enableNfcForegroundDispatch() {
-            nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
-        }
+    // NFC 받기를 활성화하는 메서드
+    private fun enableNfcForegroundDispatch() {
+        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+    }
 
-        override fun onResume() {
-            super.onResume()
-            updateSubjectsList()
-            nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
-        }
+    // 액티비티가 활성화될 때 호출되는 메서드
+    override fun onResume() {
+        super.onResume()
+        // 과목 리스트 업데이트
+        updateSubjectsList()
+        // NFC 받기 활성화
+        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+    }
 
-        private fun updateSubjectsList() {
-            val dbHelper = DBHelper(this)
-            val cursor = dbHelper.getAllSubjects()
-            totalElapsedTime = 0
-            if (cursor.moveToFirst()) {
-                while (!cursor.isAfterLast) {
-                    val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)
-                    if (columnIndex != -1) {
-                        totalElapsedTime += cursor.getLong(columnIndex)
-                    }
-                    cursor.moveToNext()
+    // 과목 리스트를 업데이트하는 메서드
+    private fun updateSubjectsList() {
+        val dbHelper = DBHelper(this)
+        val cursor = dbHelper.getAllSubjects()
+        totalElapsedTime = 0
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val columnIndex = cursor.getColumnIndex(COLUMN_ELAPSED_TIME)
+                if (columnIndex != -1) {
+                    totalElapsedTime += cursor.getLong(columnIndex)
                 }
+                cursor.moveToNext()
             }
-            elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
-            val adapter = SubjectAdapter(
-                this,
-                R.layout.subject_item,
-                cursor,
-                arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
-                intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
-                0
-            )
-            val listView = findViewById<ListView>(R.id.listView)
-            listView.adapter = adapter
         }
-
-        private fun convertMillisToTimeFormat(millis: Long): String {
-            val hours = TimeUnit.MILLISECONDS.toHours(millis)
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-        }
+        elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
+        val adapter = SubjectAdapter(
+            this,
+            R.layout.subject_item,
+            cursor,
+            arrayOf(COLUMN_SUBJECT_NAME, COLUMN_ELAPSED_TIME),
+            intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
+            0
+        )
+        val listView = findViewById<ListView>(R.id.listView)
+        listView.adapter = adapter
     }
+
+    // 밀리초를 시간 포맷으로 변환하는 메서드
+    private fun convertMillisToTimeFormat(millis: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(millis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+}
+
 
