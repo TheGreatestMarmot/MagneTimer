@@ -69,13 +69,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
+        <!-- 과목 입력칸 -->
         <EditText
             android:textSize="22dp"
             android:id="@+id/subjectEditText"
             android:layout_width="120dp"
             android:layout_height="26dp"
-            android:layout_toRightOf="@+id/subject">
-        </EditText>
+            android:layout_toRightOf="@+id/subject"
+            android:background="@android:color/transparent"
+            android:textColor="#fff"
+            />
 
         <TextView
             android:id="@+id/subject"
