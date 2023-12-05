@@ -30,7 +30,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
         val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
         val seconds = ((elapsedTime / 1000) % 60).toInt()
-        var formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
         val values = ContentValues()
         values.put(COLUMN_SUBJECT_NAME, subjectName)
         values.put(COLUMN_ELAPSED_TIME, formattedTime)
