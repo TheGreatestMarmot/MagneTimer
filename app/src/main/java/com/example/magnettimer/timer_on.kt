@@ -22,9 +22,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import java.util.TimerTask
 
-
-
-
 class timer_on : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
@@ -73,7 +70,6 @@ class timer_on : AppCompatActivity() {
 
             val resultIntent = Intent()
             setResult(RESULT_OK, resultIntent)
-
         }
 
     }
@@ -222,6 +218,4 @@ class timer_on : AppCompatActivity() {
             }
         })
     }
-
-
 }
