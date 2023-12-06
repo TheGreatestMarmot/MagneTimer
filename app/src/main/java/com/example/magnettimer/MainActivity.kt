@@ -33,10 +33,21 @@ class MainActivity : AppCompatActivity() {
     // NFC 이벤트가 발생했을 때 실행할 PendingIntent
     private var nfcPendingIntent: PendingIntent? = null
 
+    private val TIMER_ON_REQUEST_CODE = 1
+    private lateinit var totalElapsedTimeTextView: TextView
+
+    // DBHelper 객체 생성
+    private lateinit var dbHelper: DBHelper
+
     // 액티비티가 처음 생성될 때 호출되는 메서드
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        totalElapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
+
+        // DBHelper 객체 초기화
+        dbHelper = DBHelper(this)
 
         // UI 설정 메서드 호출
         setupUI()
@@ -54,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         val ellipse1 = findViewById<View>(R.id.ellipse_1)
         startRotationAnimation(ellipse1)
     }
+
+
 
     // 주어진 뷰에 대해 회전 애니메이션을 시작하는 메서드
     private fun startRotationAnimation(view: View) {
@@ -154,6 +167,19 @@ class MainActivity : AppCompatActivity() {
         val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1)
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
+
+    // 총 학습 시간을 업데이트하는 메서드
+    private fun updateTotalTime() {
+        val totalTime = dbHelper.getTotalElapsedTime()
+
+        val hours:Int = (totalTime / (1000 * 60 * 60)).toInt()
+        val minutes:Int = ((totalTime / (1000 * 60)) % 60).toInt()
+        val seconds:Int = ((totalTime / 1000) % 60).toInt()
+
+        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        totalElapsedTimeTextView.text = formattedTime
+    }
+
 }
 
 
