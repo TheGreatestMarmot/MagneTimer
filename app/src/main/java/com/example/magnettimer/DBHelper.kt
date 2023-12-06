@@ -17,7 +17,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         // 테이블의 컬럼 이름들
         const val COLUMN_ID = "_id"
         const val COLUMN_SUBJECT_NAME = "subject_name"
-        const val COLUMN_ELAPSED_TIME = "elapsed_time"
+        var COLUMN_ELAPSED_TIME = "elapsed_time"
     }
 
     // 데이터베이스가 생성될 때 호출되는 메서드
@@ -82,4 +82,3 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     }
 
 }
-
