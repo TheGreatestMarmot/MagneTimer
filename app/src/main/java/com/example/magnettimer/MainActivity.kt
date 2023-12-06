@@ -16,8 +16,11 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import com.example.magnettimer.SubjectAdapter
 import java.util.concurrent.TimeUnit
+import com.example.MagnetTimer.timer_on
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         // 회전 애니메이션 시작 메서드 호출
         val ellipse1 = findViewById<View>(R.id.ellipse_1)
         startRotationAnimation(ellipse1)
+
     }
 
 
@@ -129,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // 과목 리스트 업데이트
         updateSubjectsList()
+//        someMethod()
         // NFC 받기 활성화
         nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
     }
@@ -156,6 +161,21 @@ class MainActivity : AppCompatActivity() {
             intArrayOf(R.id.subjectNameTextView, R.id.timeTextView),
             0
         )
+        adapter.viewBinder = SimpleCursorAdapter.ViewBinder { view, cursor, columnIndex ->
+            when (view.id) {
+                R.id.timeTextView -> {
+                    // COLUMN_ELAPSED_TIME의 값을 "00:00:00" 형식으로 변환하여 설정
+                    val elapsedTimeInMillis = cursor.getLong(columnIndex)
+                    val formattedTime = convertMillisToTimeFormat(elapsedTimeInMillis)
+                    (view as TextView).text = formattedTime
+                    return@ViewBinder true
+                }
+                // 다른 View에 대한 처리가 필요하다면 추가
+                // 예: R.id.subjectNameTextView -> { ... }
+                else -> return@ViewBinder false
+            }
+        }
+
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = adapter
     }
@@ -176,10 +196,16 @@ class MainActivity : AppCompatActivity() {
         val minutes:Int = ((totalTime / (1000 * 60)) % 60).toInt()
         val seconds:Int = ((totalTime / 1000) % 60).toInt()
 
-        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-        totalElapsedTimeTextView.text = formattedTime
+        val total_formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        totalElapsedTimeTextView.text = total_formattedTime
+    }
+
+    private fun updateShowTime() {
+        val timerOnInstance = timer_on()
+        val showTime = timerOnInstance.formattedTime
+        val time = showTime
+        COLUMN_ELAPSED_TIME = time
+        findViewById<TextView>(R.id.timeTextView).text = COLUMN_ELAPSED_TIME
     }
 
 }
-
-

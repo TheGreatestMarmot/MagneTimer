@@ -43,6 +43,9 @@ class timer_on : AppCompatActivity() {
     private var minutes: Int = 0
     private var seconds: Int = 0
     private val elapsedTime = System.currentTimeMillis() - startTime
+    var formattedTime:String = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer_on)
@@ -213,7 +216,6 @@ class timer_on : AppCompatActivity() {
     }
 
     private fun updateStopwatch() {
-
         nfcHandler.post(object : Runnable {
             override fun run() {
                 if (isStopwatchRunning) {
@@ -222,7 +224,7 @@ class timer_on : AppCompatActivity() {
                     val minutes:Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
                     val seconds:Int = ((elapsedTime / 1000) % 60).toInt()
                     if (elapsedTime > 0) {
-                        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                        formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
                         stopWatchTextView.text = formattedTime
                     } else {
                         stopWatchTextView.text = "00:00:00"
