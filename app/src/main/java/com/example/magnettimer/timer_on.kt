@@ -75,13 +75,22 @@ class timer_on : AppCompatActivity() {
         val finishButton = findViewById<Button>(R.id.finish)
         finishButton.setOnClickListener {
             val subjectName: String
+            subjectName = subjectEditText.text.toString().trim().replace("\\s+".toRegex(), "")
+            if(subjectName.length > 6) {
+                val timerOnView = findViewById<View>(R.id.activity_timer_on)
+                val snackbar = Snackbar.make(timerOnView, "6글자 이내로 작성해주세요.", Snackbar.LENGTH_LONG)
+                snackbar.setAction("확인") {
+                    snackbar.dismiss()
+                }
+                snackbar.show()
+                return@setOnClickListener
+            }
             if (stopWatchTextView.text == "00:00:00") {
                 showMessage()
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 "00:00:00"
                 return@setOnClickListener
             } else {
-                subjectName = subjectEditText.text.toString()
                 if (subjectName.isNotBlank()) { // 빈 문자열이 아닌 경우에만 저장
                     val dbHelper = DBHelper(this)
                     dbHelper.insertSubject(subjectName, lastElapsedTime) // 수정된 부분
