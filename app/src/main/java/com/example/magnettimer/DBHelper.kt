@@ -37,22 +37,32 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     // 과목을 데이터베이스에 추가하는 메서드
     fun insertSubject(subjectName: String, elapsedTime: Long): Long {
-        // 시간을 HH:MM:SS 형식으로 변환
-        val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
-        val minutes = ((elapsedTime / (1000 * 60)) % 60).toInt()
-        val seconds = ((elapsedTime / 1000) % 60).toInt()
-        val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-
         // 추가할 값을 저장하는 ContentValues 객체 생성
         val values = ContentValues()
         values.put(COLUMN_SUBJECT_NAME, subjectName)
-        values.put(COLUMN_ELAPSED_TIME, formattedTime)
+        values.put(COLUMN_ELAPSED_TIME, elapsedTime)
 
         // 쓰기 가능한 데이터베이스를 가져옴
         val db = this.writableDatabase
         // 데이터를 삽입하고 삽입된 행의 ID를 반환
         return db.insert(TABLE_SUBJECTS, null, values)
     }
+
+    // 모든 과목의 시간을 합산하여 반환하는 메서드
+    fun getTotalElapsedTime(): Long {
+        // 읽기 가능한 데이터베이스를 가져옴
+        val db = this.readableDatabase
+        // 모든 과목의 시간을 합산하는 쿼리를 실행하고 결과를 Cursor로 반환
+        val cursor = db.rawQuery("SELECT SUM($COLUMN_ELAPSED_TIME) AS total FROM $TABLE_SUBJECTS", null)
+
+        var total: Long = 0
+        if (cursor.moveToFirst()) {
+            total = cursor.getLong(cursor.getColumnIndex("total"))
+        }
+        cursor.close()
+        return total
+    }
+
 
     // 모든 과목을 가져오는 메서드
     fun getAllSubjects(): Cursor {
@@ -70,5 +80,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.delete(TABLE_SUBJECTS, "$COLUMN_ID=?", arrayOf(id.toString()))
         db.close()
     }
+
 }
 
