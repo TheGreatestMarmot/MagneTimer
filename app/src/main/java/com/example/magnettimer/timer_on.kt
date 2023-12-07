@@ -10,8 +10,10 @@ import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -23,6 +25,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONObject
+import java.net.URL
 import java.util.TimerTask
 
 class timer_on : AppCompatActivity() {
@@ -45,6 +49,8 @@ class timer_on : AppCompatActivity() {
     private var seconds: Int = 0
     private val elapsedTime = System.currentTimeMillis() - startTime
     var formattedTime:String = ""
+    val CITY: String = "seoul,kr"
+    val API: String = "d8ee502438d7fd1583880301d9fb582c"
 
 
 
@@ -73,6 +79,8 @@ class timer_on : AppCompatActivity() {
         nfcPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_MUTABLE
         )
+
+        weatherTask().execute()
 
         val finishButton = findViewById<Button>(R.id.finish)
         finishButton.setOnClickListener {
@@ -277,4 +285,44 @@ class timer_on : AppCompatActivity() {
             }
         })
     }
+
+    inner class weatherTask() : AsyncTask<String, Void, String>() {
+
+        override fun doInBackground(vararg params: String?): String? {
+            var response: String?
+            try {
+                response =
+                    URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API").readText(
+                        Charsets.UTF_8
+                    )
+            } catch (e: Exception) {
+                response = null
+            }
+            return response
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+
+            if (result == null) {
+                // Handle the case where result is null
+                return
+            }
+
+            try {
+                /* Extracting JSON returns from the API */
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+
+                val temp = "현재 날씨 : " + main.getString("temp") + "°C"
+
+                /* Populating extracted data into our views */
+                findViewById<TextView>(R.id.weather).text = temp
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }
