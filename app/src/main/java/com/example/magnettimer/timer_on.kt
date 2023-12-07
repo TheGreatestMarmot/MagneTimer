@@ -165,19 +165,6 @@ class timer_on : AppCompatActivity() {
 
     fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
 
-    fun startSubjectName() {
-        val timerOnView = findViewById<View>(R.id.activity_timer_on).toString().trim().replace(" ","")
-        if(timerOnView.isNotEmpty()) {
-            val timerOnView = findViewById<View>(R.id.activity_timer_on)
-            val snackbar = Snackbar.make(timerOnView, "과목을 정하신 후 시작해주세요", Snackbar.LENGTH_LONG)
-            snackbar.setAction("확인") {
-                snackbar.dismiss()
-            }
-            snackbar.show()
-            stopTag()
-        }
-        }
-
     private fun handleNfcIntent(intent: Intent) {
         val action: String? = intent.action
         Log.d("NFC_DEBUG", "isNfcTagDetected: $isNfcTagDetected")
@@ -279,7 +266,6 @@ class timer_on : AppCompatActivity() {
     private fun updateStopwatch() {
         nfcHandler.post(object : Runnable {
             override fun run() {
-                startSubjectName()
                 if (isStopwatchRunning) {
                     startTag()
                     // 1000ms마다 스톱워치를 업데이트합니다.
