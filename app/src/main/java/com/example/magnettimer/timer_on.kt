@@ -2,8 +2,9 @@ package com.example.MagnetTimer
 
 import DBHelper
 import android.animation.ObjectAnimator
-import com.example.MagnetTimer.R
+import android.app.ActivityManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.nfc.NfcAdapter
@@ -151,8 +152,19 @@ class timer_on : AppCompatActivity() {
     // onPause 시 NFC 전방향 디스패치 비활성화
     override fun onPause() {
         super.onPause()
+        try {
+            val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            activityManager.moveTaskToFront(taskId, 0)
+        } catch (e: Exception) {
+            // 예외 처리: ActivityManager 또는 moveTaskToFront에서 예외가 발생한 경우
+            e.printStackTrace()
+        }
+
         nfcAdapter?.disableForegroundDispatch(this)
     }
+
+
+
 
     fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
 
@@ -179,8 +191,6 @@ class timer_on : AppCompatActivity() {
                 lockingTextView?.text = "딴 짓 방지 켜짐"
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 onBackPressed()
-
-
 
                 Thread(Runnable {
                     try {
