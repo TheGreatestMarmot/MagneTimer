@@ -152,14 +152,6 @@ class timer_on : AppCompatActivity() {
     // onPause 시 NFC 전방향 디스패치 비활성화
     override fun onPause() {
         super.onPause()
-        try {
-            val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            activityManager.moveTaskToFront(taskId, 0)
-        } catch (e: Exception) {
-            // 예외 처리: ActivityManager 또는 moveTaskToFront에서 예외가 발생한 경우
-            e.printStackTrace()
-        }
-
         nfcAdapter?.disableForegroundDispatch(this)
     }
 
@@ -190,6 +182,13 @@ class timer_on : AppCompatActivity() {
                 isNfcTextView?.text = "NFC 태그 완료"
                 lockingTextView?.text = "딴 짓 방지 켜짐"
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                try {
+                    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                    activityManager.moveTaskToFront(taskId, 0)
+                } catch (e: Exception) {
+                    // 예외 처리: ActivityManager 또는 moveTaskToFront에서 예외가 발생한 경우
+                    e.printStackTrace()
+                }
                 onBackPressed()
 
                 Thread(Runnable {
