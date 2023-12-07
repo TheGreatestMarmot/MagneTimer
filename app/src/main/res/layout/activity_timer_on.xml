@@ -69,16 +69,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
-        <!-- 과목 입력칸 -->
         <EditText
-            android:textSize="22dp"
             android:id="@+id/subjectEditText"
             android:layout_width="130dp"
             android:layout_height="26dp"
             android:layout_toRightOf="@+id/subject"
             android:background="@android:color/transparent"
             android:textColor="#fff"
-            />
+            android:textSize="22dp" />
 
         <TextView
             android:id="@+id/subject"
@@ -86,24 +84,20 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/suit"
             android:text="과목:"
-            android:textFontWeight="900"
             android:textColor="#fff"
+            android:textFontWeight="900"
             android:textSize="24dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/weather"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/subjectEditText"
-            android:textSize="22dp"
             android:textColor="#fff"
-            android:id="@+id/time"/>
+            android:text="현재 날씨 : "
+            android:textSize="20dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/time"
 
-            />
     </RelativeLayout>
 
     <Button

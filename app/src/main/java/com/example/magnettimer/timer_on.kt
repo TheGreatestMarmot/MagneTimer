@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import java.util.TimerTask
 
+
 class timer_on : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
