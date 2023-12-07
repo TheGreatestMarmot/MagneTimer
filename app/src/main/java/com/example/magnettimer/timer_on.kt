@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -24,10 +23,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import org.json.JSONObject
-import java.net.URL
 import java.util.TimerTask
-
 
 class timer_on : AppCompatActivity() {
 
@@ -48,18 +44,13 @@ class timer_on : AppCompatActivity() {
     private var minutes: Int = 0
     private var seconds: Int = 0
     private val elapsedTime = System.currentTimeMillis() - startTime
-    var formattedTime: String = ""
+    var formattedTime:String = ""
 
-    val CITY: String = "seoul,kr"
-    val API: String = "d8ee502438d7fd1583880301d9fb582c"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer_on)
-
-        weatherTask().execute()
-
         window.statusBarColor = Color.parseColor("#050625")
         gradient_1 = findViewById(R.id.ellipse_1)
         gradient_2 = findViewById(R.id.ellipse_2)
@@ -68,9 +59,9 @@ class timer_on : AppCompatActivity() {
         subjectEditText = findViewById<EditText>(R.id.subjectEditText)
         var elapsedTime = System.currentTimeMillis() - startTime
 
-        val hours: Int = (elapsedTime / (1000 * 60 * 60)).toInt()
-        val minutes: Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
-        val seconds: Int = ((elapsedTime / 1000) % 60).toInt()
+        val hours:Int = (elapsedTime / (1000 * 60 * 60)).toInt()
+        val minutes:Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
+        val seconds:Int = ((elapsedTime / 1000) % 60).toInt()
         // NFC 어댑터 및 PendingIntent 초기화
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -87,7 +78,7 @@ class timer_on : AppCompatActivity() {
         finishButton.setOnClickListener {
             val subjectName: String
             subjectName = subjectEditText.text.toString().trim().replace("\\s+".toRegex(), "")
-            if (subjectName.length > 6) {
+            if(subjectName.length > 6) {
                 val timerOnView = findViewById<View>(R.id.activity_timer_on)
                 val snackbar = Snackbar.make(timerOnView, "6글자 이내로 작성해주세요.", Snackbar.LENGTH_LONG)
                 snackbar.setAction("확인") {
@@ -119,8 +110,6 @@ class timer_on : AppCompatActivity() {
         }
 
     }
-
-
     private fun startRotationAnimation(view: View) {
         val rotation = ObjectAnimator.ofFloat(view, "rotation", 0f, 360f)
         rotation.duration = 2000 // 애니메이션의 기간 설정
@@ -129,7 +118,6 @@ class timer_on : AppCompatActivity() {
 
         rotation.start()
     }
-
     private fun showMessage() {
         val stopWatchTextView = findViewById<TextView>(R.id.stopWatch)
         if (stopWatchTextView.text.toString() == "00:00:00") {
@@ -157,6 +145,10 @@ class timer_on : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+//        super.onBackPressed
+    }
+
     // onPause 시 NFC 전방향 디스패치 비활성화
     override fun onPause() {
         super.onPause()
@@ -172,6 +164,19 @@ class timer_on : AppCompatActivity() {
 
 
     fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
+
+    fun startSubjectName() {
+        val timerOnView = findViewById<View>(R.id.activity_timer_on).toString().trim().replace(" ","")
+        if(timerOnView.isNotEmpty()) {
+            val timerOnView = findViewById<View>(R.id.activity_timer_on)
+            val snackbar = Snackbar.make(timerOnView, "과목을 정하신 후 시작해주세요", Snackbar.LENGTH_LONG)
+            snackbar.setAction("확인") {
+                snackbar.dismiss()
+            }
+            snackbar.show()
+            stopTag()
+        }
+        }
 
     private fun handleNfcIntent(intent: Intent) {
         val action: String? = intent.action
@@ -245,75 +250,45 @@ class timer_on : AppCompatActivity() {
         lastElapsedTime = System.currentTimeMillis() - startTime
     }
 
+    fun stopTag() {
+        stopStopwatch()
+        val isNfcTextView = findViewById<TextView>(R.id.isNfcText)
+        val lockingTextView = findViewById<TextView>(R.id.lockText)
+        gradient_1.setImageResource(R.drawable.nfc_off)
+        gradient_2.setImageResource(R.drawable.nfc_off)
+        locking.setImageResource(R.drawable.lock_open)
+        isNfcTextView?.text = "NFC 미태그"
+        lockingTextView?.text = "딴 짓 방지 꺼짐"
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        "00:00:00"
+    }
+
+    fun startTag() {
+        val elapsedTime = System.currentTimeMillis() - startTime
+        val hours:Int = (elapsedTime / (1000 * 60 * 60)).toInt()
+        val minutes:Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
+        val seconds:Int = ((elapsedTime / 1000) % 60).toInt()
+        if (elapsedTime > 0) {
+            formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            stopWatchTextView.text = formattedTime
+        } else {
+            stopWatchTextView.text = "00:00:00"
+        }
+    }
+
     private fun updateStopwatch() {
         nfcHandler.post(object : Runnable {
             override fun run() {
+                startSubjectName()
                 if (isStopwatchRunning) {
-                    val elapsedTime = System.currentTimeMillis() - startTime
-                    val hours: Int = (elapsedTime / (1000 * 60 * 60)).toInt()
-                    val minutes: Int = ((elapsedTime / (1000 * 60)) % 60).toInt()
-                    val seconds: Int = ((elapsedTime / 1000) % 60).toInt()
-                    if (elapsedTime > 0) {
-                        formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                        stopWatchTextView.text = formattedTime
-                    } else {
-                        stopWatchTextView.text = "00:00:00"
-                    }
+                    startTag()
                     // 1000ms마다 스톱워치를 업데이트합니다.
                     nfcHandler.postDelayed(this, 1000)
                 } else {
-                    val isNfcTextView = findViewById<TextView>(R.id.isNfcText)
-                    val lockingTextView = findViewById<TextView>(R.id.lockText)
-                    gradient_1.setImageResource(R.drawable.nfc_off)
-                    gradient_2.setImageResource(R.drawable.nfc_off)
-                    locking.setImageResource(R.drawable.lock_open)
-                    isNfcTextView?.text = "NFC 미태그"
-                    lockingTextView?.text = "딴 짓 방지 꺼짐"
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                    "00:00:00"
+                    stopTag()
                 }
 
             }
         })
     }
-
-    inner class weatherTask() : AsyncTask<String, Void, String>() {
-
-        override fun doInBackground(vararg params: String?): String? {
-            var response: String?
-            try {
-                response =
-                    URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API").readText(
-                        Charsets.UTF_8
-                    )
-            } catch (e: Exception) {
-                response = null
-            }
-            return response
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-
-            if (result == null) {
-                // Handle the case where result is null
-                return
-            }
-
-            try {
-                /* Extracting JSON returns from the API */
-                val jsonObj = JSONObject(result)
-                val main = jsonObj.getJSONObject("main")
-
-                val temp = "현재 날씨 : " + main.getString("temp") + "°C"
-
-                /* Populating extracted data into our views */
-                findViewById<TextView>(R.id.weather).text = temp
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
 }
