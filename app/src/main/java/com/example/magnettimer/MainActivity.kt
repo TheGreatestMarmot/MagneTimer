@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import android.nfc.NfcAdapter
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -15,12 +16,17 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import com.example.magnettimer.SubjectAdapter
 import java.util.concurrent.TimeUnit
 import com.example.MagnetTimer.timer_on
-import kotlin.math.log
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DBHelper
 
     // 액티비티가 처음 생성될 때 호출되는 메서드
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,7 +74,6 @@ class MainActivity : AppCompatActivity() {
         // 회전 애니메이션 시작 메서드 호출
         val ellipse1 = findViewById<View>(R.id.ellipse_1)
         startRotationAnimation(ellipse1)
-
     }
 
 
@@ -86,6 +92,24 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         window.statusBarColor = Color.parseColor("#050625")
         elapsedTimeTextView = findViewById(R.id.totalElapsedTimeTextView)
+
+        val onlyDate: LocalDate = LocalDate.now()
+        val yesterday = onlyDate.minusDays(1)
+        val tommorow = onlyDate.plusDays(1)
+
+        val days = DateTimeFormatter.ofPattern("M월 d일")
+
+        val todayView = findViewById<TextView>(R.id.today) ?: return
+        val yesterdayView = findViewById<TextView>(R.id.yesterday) ?: return
+        val tomorrowView = findViewById<TextView>(R.id.tommorow) ?: return
+
+        val formattedToday = onlyDate.format(days)
+        val formattedYesterday = yesterday.format(days)
+        val formattedTommorow = tommorow.format(days)
+
+        todayView.text = formattedToday
+        yesterdayView.text = formattedYesterday
+        tomorrowView.text = formattedTommorow
     }
 
     // NFC를 설정하는 메서드

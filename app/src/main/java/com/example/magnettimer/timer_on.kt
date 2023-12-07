@@ -46,6 +46,7 @@ class timer_on : AppCompatActivity() {
     var formattedTime:String = ""
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer_on)

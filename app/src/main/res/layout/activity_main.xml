@@ -18,13 +18,13 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:fontFamily="@font/suit"
             android:textFontWeight="900"
             android:textColor="@color/white"
             android:text="12월24일"
             android:background="#00ff0000"
             android:layout_weight="1"
+            android:id="@+id/yesterday"
             />
 
         <Button
@@ -33,8 +33,8 @@
             android:fontFamily="@font/suit"
             android:textFontWeight="900"
             android:textColor="#ED6653"
+            android:id="@+id/today"
             android:text="12월 25일"
-
             android:background="#00ff0000"
             android:layout_weight="1"
             />
@@ -42,7 +42,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:id="@+id/tommorow"
             android:fontFamily="@font/suit"
             android:textFontWeight="900"
             android:textColor="@color/white"
