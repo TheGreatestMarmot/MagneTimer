@@ -10,6 +10,9 @@ import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Button
@@ -26,6 +29,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import kotlin.concurrent.fixedRateTimer
 
 
 class MainActivity : AppCompatActivity() {
@@ -74,6 +78,12 @@ class MainActivity : AppCompatActivity() {
         // 회전 애니메이션 시작 메서드 호출
         val ellipse1 = findViewById<View>(R.id.ellipse_1)
         startRotationAnimation(ellipse1)
+
+        fixedRateTimer("timer", false, 0L, 300) {
+            this@MainActivity.runOnUiThread {
+                updateTotalTime()
+            }
+        }
     }
 
 
@@ -157,10 +167,14 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // 과목 리스트 업데이트
         updateSubjectsList()
-//        someMethod()
+        // 전체 시간 업데이트
+        updateTotalTime(totalElapsedTime)
         // NFC 받기 활성화
         nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+
+
     }
+
 
     // 과목 리스트를 업데이트하는 메서드
     private fun updateSubjectsList() {
@@ -200,9 +214,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = adapter
+
+        // 전체 시간 업데이트
+        updateTotalTime(totalElapsedTime)
     }
+
 
     // 밀리초를 시간 포맷으로 변환하는 메서드
     private fun convertMillisToTimeFormat(millis: Long): String {
@@ -231,5 +251,16 @@ class MainActivity : AppCompatActivity() {
         COLUMN_ELAPSED_TIME = time
         findViewById<TextView>(R.id.timeTextView).text = COLUMN_ELAPSED_TIME
     }
+
+    private fun updateTotalTime(totalElapsedTime: Long) {
+        this.totalElapsedTime = totalElapsedTime
+        elapsedTimeTextView.text = convertMillisToTimeFormat(totalElapsedTime)
+    }
+
+    private fun deleteSubjectAndUpdateTime(subjectId: Long) {
+        dbHelper.deleteSubject(subjectId)
+        updateTotalTime()
+    }
+
 
 }

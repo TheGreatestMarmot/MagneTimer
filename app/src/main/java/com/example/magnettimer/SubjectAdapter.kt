@@ -24,7 +24,7 @@ class SubjectAdapter(
     private val mContext = context
 
     // 새로운 뷰를 생성하는 메서드입니다. 여기서는 subject_item 레이아웃을 인플레이트합니다.
-    override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
+    override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup): View {
         return mInflater.inflate(R.layout.subject_item, parent, false)
     }
 
